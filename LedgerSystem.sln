@@ -1,0 +1,61 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{11111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{22222222-2222-2222-2222-222222222222}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.Domain", "src\LedgerSystem.Domain\LedgerSystem.Domain.csproj", "{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.Application", "src\LedgerSystem.Application\LedgerSystem.Application.csproj", "{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.Infrastructure", "src\LedgerSystem.Infrastructure\LedgerSystem.Infrastructure.csproj", "{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.API", "src\LedgerSystem.API\LedgerSystem.API.csproj", "{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.UnitTests", "tests\LedgerSystem.UnitTests\LedgerSystem.UnitTests.csproj", "{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedgerSystem.IntegrationTests", "tests\LedgerSystem.IntegrationTests\LedgerSystem.IntegrationTests.csproj", "{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AAAAAAAA-0001-0001-0001-AAAAAAAAAAAA} = {11111111-1111-1111-1111-111111111111}
+		{BBBBBBBB-0002-0002-0002-BBBBBBBBBBBB} = {11111111-1111-1111-1111-111111111111}
+		{CCCCCCCC-0003-0003-0003-CCCCCCCCCCCC} = {11111111-1111-1111-1111-111111111111}
+		{DDDDDDDD-0004-0004-0004-DDDDDDDDDDDD} = {11111111-1111-1111-1111-111111111111}
+		{EEEEEEEE-0005-0005-0005-EEEEEEEEEEEE} = {22222222-2222-2222-2222-222222222222}
+		{FFFFFFFF-0006-0006-0006-FFFFFFFFFFFF} = {22222222-2222-2222-2222-222222222222}
+	EndGlobalSection
+EndGlobal

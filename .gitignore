@@ -1,0 +1,36 @@
+# .NET build output
+bin/
+obj/
+out/
+
+# .NET user secrets and local settings
+appsettings.Production.json
+appsettings.Staging.json
+*.user
+.vs/
+
+# Environment files — never commit these
+.env
+.env.*
+!.env.example
+
+# EF Core migrations bundle
+efbundle
+
+# Rider / VS Code
+.idea/
+.vscode/
+*.DotSettings.user
+
+# Test results
+TestResults/
+coverage-report/
+*.trx
+*.cobertura.xml
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db

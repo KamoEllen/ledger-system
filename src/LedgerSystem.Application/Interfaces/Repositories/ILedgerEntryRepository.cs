@@ -17,4 +17,9 @@ public interface ILedgerEntryRepository
     Task<decimal?> GetBalanceAtAsync(Guid walletId, DateTime asOf, CancellationToken ct = default);
 
     Task AddRangeAsync(IEnumerable<LedgerEntry> entries, CancellationToken ct = default);
+
+    /// <summary>
+    /// Total entry count for a wallet — used to compute TotalPages in paginated responses.
+    /// </summary>
+    Task<int> CountByWalletIdAsync(Guid walletId, CancellationToken ct = default);
 }

@@ -307,6 +307,57 @@ namespace LedgerSystem.Infrastructure.Persistence.Migrations
                     .IsRequired();
             });
 
+            // ── RefreshToken ─────────────────────────────────────────────────────
+            modelBuilder.Entity("LedgerSystem.Domain.Entities.RefreshToken", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uuid")
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("gen_random_uuid()");
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("NOW()");
+
+                b.Property<DateTime>("ExpiresAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("expires_at");
+
+                b.Property<bool>("IsRevoked")
+                    .HasColumnType("boolean")
+                    .HasColumnName("is_revoked")
+                    .HasDefaultValue(false);
+
+                b.Property<DateTime?>("RevokedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasColumnName("revoked_at");
+
+                b.Property<string>("Token")
+                    .IsRequired()
+                    .HasMaxLength(512)
+                    .HasColumnType("character varying(512)")
+                    .HasColumnName("token");
+
+                b.Property<Guid>("UserId")
+                    .HasColumnType("uuid")
+                    .HasColumnName("user_id");
+
+                b.HasKey("Id");
+                b.HasIndex("Token").IsUnique().HasDatabaseName("idx_refresh_tokens_token");
+                b.HasIndex("UserId").HasDatabaseName("idx_refresh_tokens_user_id");
+                b.ToTable("refresh_tokens");
+            });
+
+            modelBuilder.Entity("LedgerSystem.Domain.Entities.RefreshToken", b =>
+            {
+                b.HasOne("LedgerSystem.Domain.Entities.User", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
             modelBuilder.Entity("LedgerSystem.Domain.Entities.User", b =>
             {
                 b.Navigation("Wallets").HasField("_wallets");

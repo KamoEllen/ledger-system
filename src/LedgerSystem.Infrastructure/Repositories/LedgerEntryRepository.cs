@@ -41,4 +41,7 @@ public sealed class LedgerEntryRepository : ILedgerEntryRepository
     {
         await _db.LedgerEntries.AddRangeAsync(entries, ct);
     }
+
+    public Task<int> CountByWalletIdAsync(Guid walletId, CancellationToken ct = default) =>
+        _db.LedgerEntries.CountAsync(le => le.WalletId == walletId, ct);
 }

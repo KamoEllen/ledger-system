@@ -47,6 +47,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IWalletService, WalletService>();
 
         // ── Seeder ────────────────────────────────────────────────────────────
         services.AddScoped<DatabaseSeeder>();

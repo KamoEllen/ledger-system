@@ -7,6 +7,10 @@ public interface IWalletRepository
     Task<Wallet?> FindByIdAsync(Guid id, CancellationToken ct = default);
     Task<IReadOnlyList<Wallet>> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
 
+    /// <summary>Admin/Finance: returns all wallets across all users, newest first.</summary>
+    Task<IReadOnlyList<Wallet>> GetAllAsync(int page, int pageSize, CancellationToken ct = default);
+    Task<int> CountAllAsync(CancellationToken ct = default);
+
     /// <summary>
     /// Locks both wallets in a single query using SELECT FOR UPDATE.
     /// Wallets are always locked in ascending ID order to prevent deadlocks.

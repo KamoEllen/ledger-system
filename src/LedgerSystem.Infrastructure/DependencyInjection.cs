@@ -50,6 +50,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<ITransferService, TransferService>();
+        services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<IFinanceService, FinanceService>();
 
         // ── Idempotency ───────────────────────────────────────────────────────
         services.AddScoped<IIdempotencyService, IdempotencyService>();

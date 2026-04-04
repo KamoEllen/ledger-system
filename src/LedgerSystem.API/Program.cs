@@ -3,8 +3,8 @@
 // M3: JWT Authentication + Swagger + FluentValidation
 // M4: Wallet controllers
 // M5: Transfer service
-// M6: Idempotency middleware + global error handler + rate limiting + Serilog  ← current milestone
-// M7: RBAC policies + admin controllers
+// M6: Idempotency middleware + global error handler + rate limiting + Serilog
+// M7: RBAC policies + admin/finance controllers  ← current milestone
 
 using System.Security.Claims;
 using System.Text;
@@ -12,6 +12,7 @@ using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using LedgerSystem.API.Middleware;
+using LedgerSystem.Application;
 using LedgerSystem.Application.Validators;
 using LedgerSystem.Infrastructure;
 using LedgerSystem.Infrastructure.Persistence;
@@ -74,7 +75,15 @@ try
             };
         });
 
-    builder.Services.AddAuthorization();
+    // ── RBAC Authorization Policies ───────────────────────────────────────────
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy(Policies.RequireAdmin, policy =>
+            policy.RequireRole("Admin"));
+
+        options.AddPolicy(Policies.RequireFinanceOrAdmin, policy =>
+            policy.RequireRole("Finance", "Admin"));
+    });
 
     // ── CORS ──────────────────────────────────────────────────────────────────
     var allowedOrigins = builder.Configuration

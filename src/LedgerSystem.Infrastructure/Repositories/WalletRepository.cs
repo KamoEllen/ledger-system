@@ -25,6 +25,17 @@ public sealed class WalletRepository : IWalletRepository
             .OrderBy(w => w.CreatedAt)
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Wallet>> GetAllAsync(
+        int page, int pageSize, CancellationToken ct = default) =>
+        await _db.Wallets
+            .OrderByDescending(w => w.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+    public Task<int> CountAllAsync(CancellationToken ct = default) =>
+        _db.Wallets.CountAsync(ct);
+
     /// <summary>
     /// Locks both wallets with SELECT FOR UPDATE in a single query.
     /// Wallets are always locked in ascending UUID order to prevent deadlocks

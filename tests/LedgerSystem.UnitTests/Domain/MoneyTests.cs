@@ -1,66 +1,151 @@
+using FluentAssertions;
 using LedgerSystem.Domain.ValueObjects;
 
 namespace LedgerSystem.UnitTests.Domain;
 
-/// <summary>
-/// Unit tests for the Money value object.
-/// Full test suite expanded in M8.
-/// </summary>
-public class MoneyTests
+public sealed class MoneyTests
 {
+    // ── Construction ──────────────────────────────────────────────────────────
+
     [Fact]
-    public void Money_Add_ShouldReturnCorrectSum()
+    public void Of_ShouldCreateMoney_WithValidInputs()
+    {
+        var money = Money.Of(100m, "USD");
+
+        money.Amount.Should().Be(100m);
+        money.Currency.Code.Should().Be("USD");
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-0.01)]
+    public void Of_ShouldThrow_WhenAmountIsNegative(decimal amount)
+    {
+        var act = () => Money.Of(amount, "USD");
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void Of_ShouldAcceptZeroAmount()
+    {
+        var money = Money.Of(0m, "USD");
+        money.Amount.Should().Be(0m);
+    }
+
+    // ── Arithmetic ────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Add_ShouldReturnCorrectSum()
     {
         var a = Money.Of(100m, "USD");
         var b = Money.Of(50m, "USD");
 
         var result = a.Add(b);
 
-        Assert.Equal(150m, result.Amount);
+        result.Amount.Should().Be(150m);
+        result.Currency.Code.Should().Be("USD");
     }
 
     [Fact]
-    public void Money_Subtract_ShouldReturnCorrectDifference()
+    public void Subtract_ShouldReturnCorrectDifference()
     {
         var a = Money.Of(200m, "USD");
         var b = Money.Of(75m, "USD");
 
         var result = a.Subtract(b);
 
-        Assert.Equal(125m, result.Amount);
+        result.Amount.Should().Be(125m);
     }
 
     [Fact]
-    public void Money_Subtract_ShouldThrow_WhenResultWouldBeNegative()
+    public void Subtract_ShouldThrow_WhenResultWouldBeNegative()
     {
         var a = Money.Of(50m, "USD");
         var b = Money.Of(100m, "USD");
 
-        Assert.Throws<InvalidOperationException>(() => a.Subtract(b));
+        var act = () => a.Subtract(b);
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
-    public void Money_Add_ShouldThrow_WhenCurrenciesDiffer()
+    public void Add_ShouldThrow_WhenCurrenciesDiffer()
     {
         var usd = Money.Of(100m, "USD");
         var eur = Money.Of(50m, "EUR");
 
-        Assert.Throws<InvalidOperationException>(() => usd.Add(eur));
+        var act = () => usd.Add(eur);
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
-    public void Money_Of_ShouldThrow_WhenAmountIsNegative()
+    public void Subtract_ShouldThrow_WhenCurrenciesDiffer()
     {
-        Assert.Throws<ArgumentException>(() => Money.Of(-1m, "USD"));
+        var usd = Money.Of(100m, "USD");
+        var eur = Money.Of(50m, "EUR");
+
+        var act = () => usd.Subtract(eur);
+        act.Should().Throw<InvalidOperationException>();
     }
 
+    // ── Equality ──────────────────────────────────────────────────────────────
+
     [Fact]
-    public void Money_Equality_ShouldBeByValue()
+    public void Equality_ShouldBeByValue()
     {
         var a = Money.Of(100m, "USD");
         var b = Money.Of(100m, "USD");
 
-        Assert.Equal(a, b);
-        Assert.True(a == b);
+        a.Should().Be(b);
+        (a == b).Should().BeTrue();
+        (a != b).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Equality_ShouldReturnFalse_WhenAmountsDiffer()
+    {
+        var a = Money.Of(100m, "USD");
+        var b = Money.Of(101m, "USD");
+
+        a.Should().NotBe(b);
+        (a == b).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Equality_ShouldReturnFalse_WhenCurrenciesDiffer()
+    {
+        var a = Money.Of(100m, "USD");
+        var b = Money.Of(100m, "EUR");
+
+        a.Should().NotBe(b);
+    }
+
+    // ── Comparison ────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CompareTo_ShouldReturnNegative_WhenLessThan()
+    {
+        var small = Money.Of(10m, "USD");
+        var large = Money.Of(100m, "USD");
+
+        small.CompareTo(large).Should().BeNegative();
+    }
+
+    [Fact]
+    public void CompareTo_ShouldReturnZero_WhenEqual()
+    {
+        var a = Money.Of(50m, "USD");
+        var b = Money.Of(50m, "USD");
+
+        a.CompareTo(b).Should().Be(0);
+    }
+
+    [Fact]
+    public void GreaterThan_ShouldWorkCorrectly()
+    {
+        var a = Money.Of(200m, "USD");
+        var b = Money.Of(100m, "USD");
+
+        (a > b).Should().BeTrue();
+        (b > a).Should().BeFalse();
     }
 }

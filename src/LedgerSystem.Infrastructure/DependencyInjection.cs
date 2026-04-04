@@ -1,7 +1,11 @@
 using LedgerSystem.Application.Interfaces;
 using LedgerSystem.Application.Interfaces.Repositories;
+using LedgerSystem.Application.Interfaces.Services;
+using LedgerSystem.Application.Services;
 using LedgerSystem.Infrastructure.Persistence;
 using LedgerSystem.Infrastructure.Repositories;
+using LedgerSystem.Infrastructure.Services;
+using LedgerSystem.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,11 +24,13 @@ public static class DependencyInjection
                 configuration.GetConnectionString("Default"),
                 npgsql => npgsql
                     .MigrationsAssembly("LedgerSystem.Infrastructure")
-                    // Retry policy: up to 3 retries on transient failures (network blips, etc.)
                     .EnableRetryOnFailure(
                         maxRetryCount: 3,
                         maxRetryDelay: TimeSpan.FromSeconds(5),
                         errorCodesToAdd: null)));
+
+        // ── JWT settings ──────────────────────────────────────────────────────
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 
         // ── Unit of Work ──────────────────────────────────────────────────────
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -35,8 +41,14 @@ public static class DependencyInjection
         services.AddScoped<ITransferRepository, TransferRepository>();
         services.AddScoped<ILedgerEntryRepository, LedgerEntryRepository>();
         services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
-        // ── Seeder (registered so it can be resolved at startup) ──────────────
+        // ── Services ──────────────────────────────────────────────────────────
+        services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        // ── Seeder ────────────────────────────────────────────────────────────
         services.AddScoped<DatabaseSeeder>();
 
         return services;

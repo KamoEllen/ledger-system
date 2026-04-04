@@ -53,39 +53,8 @@ public sealed class TransfersController : ControllerBase
             IdempotencyKey: idempotencyKey,
             Description: request.Description);
 
-        try
-        {
-            var result = await _transferService.ExecuteAsync(serviceRequest, ct);
-            return StatusCode(StatusCodes.Status201Created, result);
-        }
-        catch (DuplicateTransferException ex)
-        {
-            return Conflict(ErrorResponse.From(ex));
-        }
-        catch (WalletNotFoundException ex)
-        {
-            return NotFound(ErrorResponse.From(ex));
-        }
-        catch (UnauthorizedTransferException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ErrorResponse.From(ex));
-        }
-        catch (InsufficientFundsException ex)
-        {
-            return UnprocessableEntity(ErrorResponse.From(ex));
-        }
-        catch (WalletFrozenException ex)
-        {
-            return UnprocessableEntity(ErrorResponse.From(ex));
-        }
-        catch (CurrencyMismatchException ex)
-        {
-            return UnprocessableEntity(ErrorResponse.From(ex));
-        }
-        catch (SelfTransferException ex)
-        {
-            return UnprocessableEntity(ErrorResponse.From(ex));
-        }
+        var result = await _transferService.ExecuteAsync(serviceRequest, ct);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     /// <summary>Returns a single transfer visible to the authenticated user.</summary>
@@ -94,16 +63,9 @@ public sealed class TransfersController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTransfer(Guid id, CancellationToken ct)
     {
-        try
-        {
-            var userId = User.GetUserId();
-            var transfer = await _transferService.GetByIdAsync(id, userId, ct);
-            return Ok(transfer);
-        }
-        catch (TransferNotFoundException ex)
-        {
-            return NotFound(ErrorResponse.From(ex));
-        }
+        var userId = User.GetUserId();
+        var transfer = await _transferService.GetByIdAsync(id, userId, ct);
+        return Ok(transfer);
     }
 
     /// <summary>Lists all transfers across all wallets owned by the authenticated user.</summary>

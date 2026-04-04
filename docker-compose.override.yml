@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Development overrides — applied automatically by `docker compose up`
+#
+# Differences from production:
+#   • Uses the SDK image so dotnet-watch can hot-reload on file changes
+#   • Mounts the source tree so edits take effect without rebuilding
+#   • Sets ASPNETCORE_ENVIRONMENT=Development (enables Swagger UI)
+#   • Exposes port 5000 in addition to 8080 for HTTPS redirect testing
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  api:
+    build:
+      target: build          # use the SDK stage, not the runtime stage
+    command: >
+      dotnet watch run
+        --project src/LedgerSystem.API/LedgerSystem.API.csproj
+        --no-launch-profile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - .:/src               # mount entire repo for hot-reload
+      - /src/bin             # exclude build artefacts from the mount
+      - /src/obj
+    ports:
+      - "8080:8080"
+
+  db:
+    ports:
+      - "5432:5432"          # always expose DB port in dev

@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Ledger System — Docker Compose (production-like)
+#
+# Usage:
+#   cp .env.example .env          # fill in all REPLACE_ values
+#   docker compose up --build -d
+#   docker compose exec api dotnet LedgerSystem.API.dll --seed
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"          # expose for local tooling (pgAdmin, psql)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API ─────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ConnectionStrings__Default: >-
+        Host=db;Port=5432;Database=${DB_NAME};
+        Username=${DB_USER};Password=${DB_PASSWORD};
+        Pooling=true;Minimum Pool Size=2;Maximum Pool Size=20
+      Jwt__Secret:                ${JWT_SECRET}
+      Jwt__Issuer:                ${JWT_ISSUER}
+      Jwt__Audience:              ${JWT_AUDIENCE}
+      Jwt__AccessTokenExpiryMinutes: ${JWT_ACCESS_EXPIRY_MINUTES:-15}
+      Jwt__RefreshTokenExpiryDays:   ${JWT_REFRESH_EXPIRY_DAYS:-7}
+      Cors__AllowedOrigins__0:    ${CORS_ORIGIN:-http://localhost:4200}
+      RateLimit__PermitLimit:     ${RATE_LIMIT_PERMIT:-100}
+      RateLimit__WindowSeconds:   ${RATE_LIMIT_WINDOW:-60}
+      Seed__AdminEmail:           ${ADMIN_EMAIL}
+      Seed__AdminPassword:        ${ADMIN_PASSWORD}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    volumes:
+      - api_logs:/app/logs
+
+volumes:
+  postgres_data:
+    driver: local
+  api_logs:
+    driver: local

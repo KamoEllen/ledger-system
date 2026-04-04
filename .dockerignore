@@ -1,0 +1,41 @@
+# ── Build artefacts ───────────────────────────────────────────────────────────
+**/bin/
+**/obj/
+**/out/
+
+# ── .NET tooling ──────────────────────────────────────────────────────────────
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+
+# ── Test results ──────────────────────────────────────────────────────────────
+**/TestResults/
+**/*.trx
+**/coverage*/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Secrets / environment ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+**/appsettings.Production.json
+**/appsettings.Local.json
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Documentation ─────────────────────────────────────────────────────────────
+README.md
+PROJECT_REPORT.md
+docs/
+
+# ── Docker files (not needed inside image) ────────────────────────────────────
+Dockerfile*
+docker-compose*.yml
+.dockerignore

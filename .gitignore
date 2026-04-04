@@ -28,8 +28,8 @@ coverage-report/
 *.trx
 *.cobertura.xml
 
-# Docker
-.dockerignore
+# Docker — ignore .env but track all other Docker files
+# (Dockerfile, docker-compose*, .dockerignore are committed)
 
 # OS
 .DS_Store

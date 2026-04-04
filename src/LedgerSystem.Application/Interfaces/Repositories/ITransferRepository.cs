@@ -13,6 +13,10 @@ public interface ITransferRepository
 
     Task<int> CountByWalletIdsAsync(IEnumerable<Guid> walletIds, CancellationToken ct = default);
 
+    /// <summary>Admin: returns all transfers across all wallets, newest first.</summary>
+    Task<IReadOnlyList<Transfer>> GetAllAsync(int page, int pageSize, CancellationToken ct = default);
+    Task<int> CountAllAsync(CancellationToken ct = default);
+
     Task AddAsync(Transfer transfer, CancellationToken ct = default);
     Task UpdateAsync(Transfer transfer, CancellationToken ct = default);
 }

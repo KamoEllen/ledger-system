@@ -12,15 +12,14 @@
     <PackageReference Include="xunit" Version="2.6.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <!-- M8: WebApplicationFactory added here -->
-    <!--
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\LedgerSystem.API\LedgerSystem.API.csproj" />
+    <ProjectReference Include="..\..\src\LedgerSystem.Infrastructure\LedgerSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

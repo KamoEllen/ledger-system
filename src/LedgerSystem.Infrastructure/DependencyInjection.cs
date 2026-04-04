@@ -2,6 +2,7 @@ using LedgerSystem.Application.Interfaces;
 using LedgerSystem.Application.Interfaces.Repositories;
 using LedgerSystem.Application.Interfaces.Services;
 using LedgerSystem.Application.Services;
+using LedgerSystem.Infrastructure.BackgroundServices;
 using LedgerSystem.Infrastructure.Persistence;
 using LedgerSystem.Infrastructure.Repositories;
 using LedgerSystem.Infrastructure.Services;
@@ -50,8 +51,14 @@ public static class DependencyInjection
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<ITransferService, TransferService>();
 
+        // ── Idempotency ───────────────────────────────────────────────────────
+        services.AddScoped<IIdempotencyService, IdempotencyService>();
+
         // ── Seeder ────────────────────────────────────────────────────────────
         services.AddScoped<DatabaseSeeder>();
+
+        // ── Background services ───────────────────────────────────────────────
+        services.AddHostedService<IdempotencyCleanupService>();
 
         return services;
     }

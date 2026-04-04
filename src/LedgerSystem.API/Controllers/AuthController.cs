@@ -27,15 +27,8 @@ public sealed class AuthController : ControllerBase
         [FromBody] RegisterRequest request,
         CancellationToken ct)
     {
-        try
-        {
-            var result = await _authService.RegisterAsync(request, ct);
-            return StatusCode(StatusCodes.Status201Created, result);
-        }
-        catch (DuplicateEmailException ex)
-        {
-            return Conflict(ErrorResponse.From(ex));
-        }
+        var result = await _authService.RegisterAsync(request, ct);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     /// <summary>Authenticates an existing user and returns a token pair.</summary>
@@ -46,15 +39,8 @@ public sealed class AuthController : ControllerBase
         [FromBody] LoginRequest request,
         CancellationToken ct)
     {
-        try
-        {
-            var result = await _authService.LoginAsync(request, ct);
-            return Ok(result);
-        }
-        catch (InvalidCredentialsException ex)
-        {
-            return Unauthorized(ErrorResponse.From(ex));
-        }
+        var result = await _authService.LoginAsync(request, ct);
+        return Ok(result);
     }
 
     /// <summary>
@@ -69,15 +55,8 @@ public sealed class AuthController : ControllerBase
         [FromBody] RefreshTokenRequest request,
         CancellationToken ct)
     {
-        try
-        {
-            var result = await _authService.RefreshAsync(request, ct);
-            return Ok(result);
-        }
-        catch (InvalidRefreshTokenException ex)
-        {
-            return Unauthorized(ErrorResponse.From(ex));
-        }
+        var result = await _authService.RefreshAsync(request, ct);
+        return Ok(result);
     }
 
     /// <summary>Revokes the supplied refresh token. Idempotent.</summary>

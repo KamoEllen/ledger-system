@@ -38,20 +38,9 @@ public sealed class WalletsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetWallet(Guid id, CancellationToken ct)
     {
-        try
-        {
-            var userId = User.GetUserId();
-            var wallet = await _walletService.GetByIdAsync(id, userId, ct);
-            return Ok(wallet);
-        }
-        catch (WalletNotFoundException ex)
-        {
-            return NotFound(ErrorResponse.From(ex));
-        }
-        catch (UnauthorizedWalletAccessException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ErrorResponse.From(ex));
-        }
+        var userId = User.GetUserId();
+        var wallet = await _walletService.GetByIdAsync(id, userId, ct);
+        return Ok(wallet);
     }
 
     /// <summary>Creates a new wallet for the authenticated user.</summary>
@@ -63,16 +52,9 @@ public sealed class WalletsController : ControllerBase
         [FromBody] CreateWalletRequest request,
         CancellationToken ct)
     {
-        try
-        {
-            var userId = User.GetUserId();
-            var wallet = await _walletService.CreateAsync(userId, request, ct);
-            return CreatedAtAction(nameof(GetWallet), new { id = wallet.Id }, wallet);
-        }
-        catch (WalletAlreadyExistsException ex)
-        {
-            return Conflict(ErrorResponse.From(ex));
-        }
+        var userId = User.GetUserId();
+        var wallet = await _walletService.CreateAsync(userId, request, ct);
+        return CreatedAtAction(nameof(GetWallet), new { id = wallet.Id }, wallet);
     }
 
     /// <summary>
@@ -91,19 +73,8 @@ public sealed class WalletsController : ControllerBase
         if (page < 1) page = 1;
         if (pageSize is < 1 or > 100) pageSize = 20;
 
-        try
-        {
-            var userId = User.GetUserId();
-            var history = await _walletService.GetHistoryAsync(id, userId, page, pageSize, ct);
-            return Ok(history);
-        }
-        catch (WalletNotFoundException ex)
-        {
-            return NotFound(ErrorResponse.From(ex));
-        }
-        catch (UnauthorizedWalletAccessException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ErrorResponse.From(ex));
-        }
+        var userId = User.GetUserId();
+        var history = await _walletService.GetHistoryAsync(id, userId, page, pageSize, ct);
+        return Ok(history);
     }
 }

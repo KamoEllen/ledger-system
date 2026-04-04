@@ -61,6 +61,7 @@ public sealed class GlobalExceptionHandlerMiddleware
         WalletAlreadyExistsException      => StatusCodes.Status409Conflict,
         DuplicateEmailException           => StatusCodes.Status409Conflict,
         DuplicateTransferException        => StatusCodes.Status409Conflict,
+        InvalidRoleException              => StatusCodes.Status400BadRequest,
         WalletNotFoundException           => StatusCodes.Status404NotFound,
         TransferNotFoundException         => StatusCodes.Status404NotFound,
         UserNotFoundException             => StatusCodes.Status404NotFound,

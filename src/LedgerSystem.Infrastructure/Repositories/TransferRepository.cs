@@ -39,6 +39,17 @@ public sealed class TransferRepository : ITransferRepository
             .CountAsync(t => ids.Contains(t.SourceWalletId) || ids.Contains(t.DestinationWalletId), ct);
     }
 
+    public async Task<IReadOnlyList<Transfer>> GetAllAsync(
+        int page, int pageSize, CancellationToken ct = default) =>
+        await _db.Transfers
+            .OrderByDescending(t => t.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+    public Task<int> CountAllAsync(CancellationToken ct = default) =>
+        _db.Transfers.CountAsync(ct);
+
     public async Task AddAsync(Transfer transfer, CancellationToken ct = default)
     {
         await _db.Transfers.AddAsync(transfer, ct);

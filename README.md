@@ -1,6 +1,12 @@
 # Ledger System
 
-A production-grade, double-entry ledger-based payment API built with .NET 8, PostgreSQL, and Angular.
+![.NET](https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
+![Angular](https://img.shields.io/badge/Angular-17-DD0031?logo=angular)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
+![Tests](https://img.shields.io/badge/Tests-xUnit-512BD4?logo=.net)
+
+Double-entry ledger-based payment API built with .NET 8, PostgreSQL, and Angular.
 Tracks money movement across user wallets using immutable ledger entries, ACID transactions, and idempotent transfer endpoints.
 
 ---

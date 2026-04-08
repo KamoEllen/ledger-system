@@ -1,0 +1,172 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1000" height="700" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a1a">Ledger System Architecture</text>
+  <text x="500" y="58" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#666">Clean Architecture. Four Layers with Strict Dependency Rules</text>
+  
+  <!-- Angular Frontend (Phase 2) - Outside the main architecture -->
+  <g transform="translate(50, 100)">
+    <rect width="140" height="70" rx="6" fill="#fff" stroke="#dd1b16" stroke-width="2"/>
+    <text x="70" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#dd1b16">Angular 17 SPA</text>
+    <text x="70" y="42" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Phase 2: Separate</text>
+    <text x="70" y="55" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">JWT + Idempotency</text>
+  </g>
+  
+  <!-- Arrow from Angular to API -->
+  <path d="M 190 135 L 240 135" stroke="#dd1b16" stroke-width="2" fill="none" marker-end="url(#arrowred)"/>
+  <text x="215" y="125" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#dd1b16">HTTPS/JSON</text>
+  
+  <!-- Main Architecture Box -->
+  <rect x="240" y="90" width="520" height="480" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="2"/>
+  
+  <!-- API Layer -->
+  <g transform="translate(260, 110)">
+    <rect width="480" height="90" rx="6" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+    <text x="240" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#e65100">API Layer</text>
+    <text x="240" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Controllers, Routing, HTTP Status Codes</text>
+    
+    <!-- Middleware boxes -->
+    <rect x="20" y="55" width="85" height="25" rx="4" fill="#ffcc80" stroke="#ff9800" stroke-width="1"/>
+    <text x="62" y="72" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#e65100">Auth Middleware</text>
+    
+    <rect x="115" y="55" width="85" height="25" rx="4" fill="#ffcc80" stroke="#ff9800" stroke-width="1"/>
+    <text x="157" y="72" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#e65100">Idempotency</text>
+    
+    <rect x="210" y="55" width="85" height="25" rx="4" fill="#ffcc80" stroke="#ff9800" stroke-width="1"/>
+    <text x="252" y="72" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#e65100">Rate Limiting</text>
+    
+    <rect x="305" y="55" width="85" height="25" rx="4" fill="#ffcc80" stroke="#ff9800" stroke-width="1"/>
+    <text x="347" y="72" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#e65100">Exception Handler</text>
+    
+    <rect x="400" y="55" width="70" height="25" rx="4" fill="#ffcc80" stroke="#ff9800" stroke-width="1"/>
+    <text x="435" y="72" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#e65100">Logging</text>
+  </g>
+  
+  <!-- Arrow down to Application -->
+  <path d="M 500 200 L 500 220" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowgray)"/>
+  
+  <!-- Application Layer -->
+  <g transform="translate(280, 230)">
+    <rect width="440" height="80" rx="6" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+    <text x="220" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#2e7d32">Application Layer</text>
+    <text x="220" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Use Cases, Services, DTOs, FluentValidation</text>
+    
+    <!-- Transfer Service highlight -->
+    <rect x="150" y="55" width="140" height="20" rx="4" fill="#a5d6a7" stroke="#4caf50" stroke-width="1"/>
+    <text x="220" y="68" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1b5e20" font-weight="bold">TransferService</text>
+  </g>
+  
+  <!-- Arrow down to Domain -->
+  <path d="M 500 310 L 500 330" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowgray)"/>
+  
+  <!-- Domain Layer (The Core) -->
+  <g transform="translate(300, 350)">
+    <rect width="400" height="100" rx="6" fill="#ffebee" stroke="#d32f2f" stroke-width="3"/>
+    <text x="200" y="30" text-anchor="middle" font-family="Segoe UI, Arial" font-size="16" font-weight="bold" fill="#b71c1c">Domain Layer</text>
+    <text x="200" y="50" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Core Business Logic. Zero External Dependencies</text>
+    
+    <!-- Domain entities -->
+    <rect x="30" y="65" width="70" height="22" rx="4" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1"/>
+    <text x="65" y="80" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#b71c1c">Wallet</text>
+    
+    <rect x="110" y="65" width="70" height="22" rx="4" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1"/>
+    <text x="145" y="80" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#b71c1c">Transfer</text>
+    
+    <rect x="190" y="65" width="80" height="22" rx="4" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1"/>
+    <text x="230" y="80" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#b71c1c">LedgerEntry</text>
+    
+    <rect x="280" y="65" width="50" height="22" rx="4" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1"/>
+    <text x="305" y="80" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#b71c1c">User</text>
+    
+    <rect x="340" y="65" width="50" height="22" rx="4" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1"/>
+    <text x="365" y="80" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#b71c1c">Money</text>
+  </g>
+  
+  <!-- Infrastructure Layer (Side/Pointing up) -->
+  <g transform="translate(300, 480)">
+    <rect width="400" height="70" rx="6" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+    <text x="200" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#7b1fa2">Infrastructure Layer</text>
+    <text x="200" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">EF Core, PostgreSQL, Repositories</text>
+    
+    <!-- Implements label -->
+    <text x="200" y="62" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#9c27b0" font-style="italic">Implements interfaces defined by Domain</text>
+  </g>
+  
+  <!-- Arrow from Infrastructure UP to Domain (dashed) -->
+  <path d="M 500 480 L 500 450" stroke="#9c27b0" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowpurple)"/>
+  
+  <!-- PostgreSQL Database (External) -->
+  <g transform="translate(800, 350)">
+    <ellipse cx="60" cy="30" rx="50" ry="20" fill="#336791" opacity="0.2"/>
+    <rect width="120" height="120" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="60" y="35" text-anchor="middle" font-family="Segoe UI, Arial" font-size="13" font-weight="bold" fill="#0d47a1">PostgreSQL 16</text>
+    
+    <!-- Tables -->
+    <rect x="15" y="50" width="90" height="15" rx="2" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+    <text x="60" y="61" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#1565c0">users</text>
+    
+    <rect x="15" y="68" width="90" height="15" rx="2" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+    <text x="60" y="79" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#1565c0">wallets</text>
+    
+    <rect x="15" y="86" width="90" height="15" rx="2" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+    <text x="60" y="97" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#1565c0">ledger_entries</text>
+  </g>
+  
+  <!-- Arrow from Infrastructure to PostgreSQL -->
+  <path d="M 700 515 L 800 400" stroke="#9c27b0" stroke-width="2" fill="none" marker-end="url(#arrowblue)"/>
+  <text x="770" y="480" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Entity Framework</text>
+  
+  <!-- Docker & DevOps (Bottom left) -->
+  <g transform="translate(50, 480)">
+    <rect width="140" height="90" rx="6" fill="#e0f2f1" stroke="#009688" stroke-width="2"/>
+    <text x="70" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#00695c">Docker Compose</text>
+    
+    <rect x="10" y="35" width="55" height="18" rx="3" fill="#80cbc4" stroke="#009688" stroke-width="1"/>
+    <text x="37" y="47" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#004d40">.NET API</text>
+    
+    <rect x="75" y="35" width="55" height="18" rx="3" fill="#80cbc4" stroke="#009688" stroke-width="1"/>
+    <text x="102" y="47" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#004d40">Nginx</text>
+    
+    <rect x="10" y="58" width="55" height="18" rx="3" fill="#80cbc4" stroke="#009688" stroke-width="1"/>
+    <text x="37" y="70" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#004d40">PostgreSQL</text>
+    
+    <rect x="75" y="58" width="55" height="18" rx="3" fill="#80cbc4" stroke="#009688" stroke-width="1"/>
+    <text x="102" y="70" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#004d40">GitHub Actions</text>
+  </g>
+  
+  <!-- Arrow from Docker to API -->
+  <path d="M 190 525 L 240 180" stroke="#009688" stroke-width="2" fill="none" stroke-dasharray="4,4" marker-end="url(#arrowteal)"/>
+  <text x="200" y="400" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#009688" transform="rotate(-50, 200, 400)">CI/CD Pipeline</text>
+  
+  <!-- Dependency Rule Annotation -->
+  <g transform="translate(50, 600)">
+    <rect width="880" height="80" rx="6" fill="#fff8e1" stroke="#ffc107" stroke-width="1"/>
+    <text x="440" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#ff6f00">The Dependency Rule: All dependencies point inward toward the Domain</text>
+    
+    <text x="40" y="50" font-family="Segoe UI, Arial" font-size="10" fill="#666">• Domain has ZERO framework dependencies — pure C# logic</text>
+    <text x="40" y="68" font-family="Segoe UI, Arial" font-size="10" fill="#666">• Infrastructure implements interfaces defined by Domain/Application (Dependency Inversion)</text>
+    <text x="450" y="50" font-family="Segoe UI, Arial" font-size="10" fill="#666">• Financial rules (no negative balance, immutable ledger) live in Domain and cannot be bypassed</text>
+    <text x="450" y="68" font-family="Segoe UI, Arial" font-size="10" fill="#666">• Can test Domain logic with no database, no HTTP server, no external libraries</text>
+  </g>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowgray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowpurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9c27b0"/>
+    </marker>
+    <marker id="arrowblue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowteal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#009688"/>
+    </marker>
+    <marker id="arrowred" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dd1b16"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,112 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-family="Segoe UI, Arial" font-size="20" font-weight="bold" fill="#1a1a1a">Deadlock Prevention: Ordered UUID Locking</text>
+  <text x="400" y="50" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" fill="#666">How simultaneous transfers A→B and B→A avoid deadlock</text>
+  
+  <!-- Actors -->
+  <g transform="translate(50, 80)">
+    <rect width="80" height="50" rx="4" fill="#e3f2fd" stroke="#1976D2" stroke-width="2"/>
+    <text x="40" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#0D47A1">Request 1</text>
+    <text x="40" y="38" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">A sends $50 to B</text>
+  </g>
+  
+  <g transform="translate(350, 80)">
+    <rect width="100" height="50" rx="4" fill="#f3e5f5" stroke="#9C27B0" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#7B1FA2">Database</text>
+    <text x="50" y="38" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">PostgreSQL</text>
+  </g>
+  
+  <g transform="translate(650, 80)">
+    <rect width="80" height="50" rx="4" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2"/>
+    <text x="40" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#2E7D32">Request 2</text>
+    <text x="40" y="38" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">B sends $50 to A</text>
+  </g>
+  
+  <!-- Lifelines -->
+  <line x1="90" y1="120" x2="90" y2="520" stroke="#ccc" stroke-width="2" stroke-dasharray="4,4"/>
+  <line x1="400" y1="120" x2="400" y2="520" stroke="#9C27B0" stroke-width="2"/>
+  <line x1="690" y1="120" x2="690" y2="520" stroke="#ccc" stroke-width="2" stroke-dasharray="4,4"/>
+  
+  <!-- Wallet labels -->
+  <rect x="300" y="140" width="200" height="30" rx="4" fill="#fff3e0" stroke="#FF9800" stroke-width="1"/>
+  <text x="400" y="160" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#E65100">Wallet A: a3f8...8f05 (alphabetically FIRST)</text>
+  
+  <rect x="300" y="180" width="200" height="30" rx="4" fill="#fff3e0" stroke="#FF9800" stroke-width="1"/>
+  <text x="400" y="200" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#E65100">Wallet B: b7e2...9a12 (alphabetically SECOND)</text>
+  
+  <!-- Request 1: Step 1 - Sort and Lock A -->
+  <path d="M 90 230 L 400 230" stroke="#1976D2" stroke-width="2" fill="none" marker-end="url(#arrowblue)"/>
+  <text x="245" y="220" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2">1. Sort IDs: [A, B]</text>
+  <text x="245" y="242" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2">SELECT FOR UPDATE A</text>
+  
+  <!-- Lock A indicator -->
+  <rect x="360" y="250" width="80" height="25" rx="4" fill="#1976D2" opacity="0.2"/>
+  <text x="400" y="267" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2" font-weight="bold">🔒 LOCKED by R1</text>
+  
+  <!-- Request 2: Step 1 - Sort and try Lock A (waits) -->
+  <path d="M 690 290 L 400 290" stroke="#4CAF50" stroke-width="2" fill="none" marker-end="url(#arrowgreen)"/>
+  <text x="545" y="280" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#4CAF50">2. Sort IDs: [A, B] (same order!)</text>
+  <text x="545" y="302" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#4CAF50">SELECT FOR UPDATE A → WAIT</text>
+  
+  <!-- Wait indicator -->
+  <rect x="360" y="310" width="80" height="25" rx="4" fill="#FFC107" opacity="0.3"/>
+  <text x="400" y="327" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#F57F17" font-weight="bold">⏳ R2 WAITING</text>
+  
+  <!-- Request 1: Step 2 - Lock B -->
+  <path d="M 90 350 L 400 350" stroke="#1976D2" stroke-width="2" fill="none" marker-end="url(#arrowblue)"/>
+  <text x="245" y="340" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2">3. SELECT FOR UPDATE B</text>
+  
+  <!-- Lock B indicator -->
+  <rect x="360" y="370" width="80" height="25"  rx="4" fill="#1976D2" opacity="0.2"/>
+  <text x="400" y="387" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2" font-weight="Bold">🔒 LOCKED by R1</text>
+  
+  <!-- Request 1: Complete -->
+  <path d="M 400 410 L 90 410" stroke="#1976D2" stroke-width="2" fill="none" marker-end="url(#arrowblue)"/>
+  <text x="245" y="425" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#1976D2">4. COMMIT (releases A and B)</text>
+  
+  <!-- Release indicator -->
+  <rect x="360" y="430" width="80" height="25" rx="4" fill="#4CAF50" opacity="0.2"/>
+  <text x="400" y="447" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#2E7D32" font-weight="bold">🔓 UNLOCKED</text>
+  
+  <!-- Request 2: Now acquires A -->
+  <path d="M 400 470 L 690 470" stroke="#4CAF50" stroke-width="2" fill="none" marker-end="url(#arrowgreen)"/>
+  <text x="545" y="460" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#4CAF50">5. R2 acquires A (now free)</text>
+  
+  <!-- Request 2: Lock B -->
+  <path d="M 690 490 L 400 490" stroke="#4CAF50" stroke-width="2" fill="none" marker-end="url(#arrowgreen)"/>
+  <text x="545" y="505" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#4CAF50">6. R2 acquires B, COMMIT</text>
+  
+  <!-- Result box -->
+  <rect x="50" y="540" width="700" height="50" rx="4" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2"/>
+  <text x="400" y="560" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#2E7D32">✓ RESULT: Sequential execution, no deadlock, data consistency maintained</text>
+  <text x="400" y="578" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Both transfers complete successfully. Ordered locking transforms potential deadlock into ordered queue.</text>
+  
+  <!-- Alternative (BAD) scenario box -->
+  <rect x="50" y="620" width="700" height="60" rx="4" fill="#ffebee" stroke="#f44336" stroke-width="1" opacity="0.8"/>
+  <text x="400" y="645" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#c62828">✗ WITHOUT ORDERED LOCKING (Deadlock Scenario):</text>
+  <text x="400" y="662" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">R1 locks A, R2 locks B → R1 waits for B (held by R2), R2 waits for A (held by R1) → DEADLOCK</text>
+  <text x="400" y="677" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Database detects cycle, aborts one transaction, client receives error, must retry.</text>
+  
+  <!-- Code snippet -->
+  <rect x="520" y="140" width="230" height="120" rx="4" fill="#263238" stroke="#37474F" stroke-width="1"/>
+  <text x="635" y="160" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#80cbc4">// C# Implementation</text>
+  <text x="535" y="180" font-family="Consolas, monospace" font-size="9" fill="#eeffff">var orderedIds =</text>
+  <text x="535" y="195" font-family="Consolas, monospace" font-size="9" fill="#eeffff">  new[] { fromId, toId }</text>
+  <text x="535" y="210" font-family="Consolas, monospace" font-size="9" fill="#eeffff">  .OrderBy(id => id)</text>
+  <text x="535" y="225" font-family="Consolas, monospace" font-size="9" fill="#eeffff">  .ToList();</text>
+  <text x="535" y="245" font-family="Consolas, monospace" font-size="9" fill="#eeffff">foreach (var id in orderedIds)</text>
+  <text x="535" y="260" font-family="Consolas, monospace" font-size="9" fill="#eeffff">  await LockWalletAsync(id);</text>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowblue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976D2"/>
+    </marker>
+    <marker id="arrowgreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50"/>
+    </marker>
+  </defs>
+</svg>

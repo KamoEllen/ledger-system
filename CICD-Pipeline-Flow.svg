@@ -1,0 +1,136 @@
+<svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="900" height="400" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-family="Segoe UI, Arial" font-size="20" font-weight="bold" fill="#1a1a1a">CI/CD Pipeline: Code to Production</text>
+  <text x="450" y="50" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" fill="#666">GitHub Actions Workflow with Real PostgreSQL Testing</text>
+  
+  <!-- Stage 1: Code Commit -->
+  <g transform="translate(50, 80)">
+    <rect width="100" height="80" rx="8" fill="#e3f2fd" stroke="#1976D2" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#0D47A1">1. Code Push</text>
+    <text x="50" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Developer commits</text>
+    <text x="50" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">to main/develop</text>
+    <text x="50" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">branch</text>
+    <!-- Git icon -->
+    <circle cx="50" cy="100" r="12" fill="#F05032"/>
+    <text x="50" y="104" text-anchor="middle" font-family="Arial" font-size="10" fill="white" font-weight="bold">git</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <path d="M 150 120 L 180 120" stroke="#4CAF50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  <text x="165" y="110" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#4CAF50">trigger</text>
+  
+  <!-- Stage 2: Lint/Scan -->
+  <g transform="translate(180, 80)">
+    <rect width="100" height="80" rx="8" fill="#fff3e0" stroke="#FF9800" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#E65100">2. Lint & Scan</text>
+    <text x="50" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">dotnet format</text>
+    <text x="50" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Security scan</text>
+    <text x="50" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Dependency check</text>
+    <!-- Check icon -->
+    <circle cx="85" cy="100" r="10" fill="#4CAF50"/>
+    <text x="85" y="104" text-anchor="middle" font-family="Arial" font-size="10" fill="white">✓</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <path d="M 280 120 L 310 120" stroke="#4CAF50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  
+  <!-- Stage 3: Unit Tests -->
+  <g transform="translate(310, 80)">
+    <rect width="100" height="80" rx="8" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#2E7D32">3. Unit Tests</text>
+    <text x="50" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Domain logic</text>
+    <text x="50" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Application services</text>
+    <text x="50" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Target: 95% coverage</text>
+    <!-- Test icon -->
+    <rect x="35" y="92" width="30" height="16" rx="2" fill="#4CAF50"/>
+    <text x="50" y="103" text-anchor="middle" font-family="Arial" font-size="8" fill="white">xUnit</text>
+  </g>
+  
+  <!-- Arrow 3 -->
+  <path d="M 410 120 L 440 120" stroke="#4CAF50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  
+  <!-- Stage 4: Integration Tests (with Postgres) -->
+  <g transform="translate(440, 70)">
+    <rect width="120" height="100" rx="8" fill="#fce4ec" stroke="#E91E63" stroke-width="3"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#C2185B">4. Integration Tests</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Real PostgreSQL 16</text>
+    <text x="60" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">WebApplicationFactory</text>
+    <text x="60" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Concurrency tests</text>
+    <text x="60" y="84" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Idempotency validation</text>
+    <!-- Postgres icon -->
+    <ellipse cx="60" cy="108" rx="35" ry="10" fill="#336791"/>
+    <text x="60" y="112" text-anchor="middle" font-family="Arial" font-size="8" fill="white">PostgreSQL</text>
+  </g>
+  
+  <!-- Arrow 4 -->
+  <path d="M 560 120 L 590 120" stroke="#4CAF50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  
+  <!-- Stage 5: Docker Build -->
+  <g transform="translate(590, 80)">
+    <rect width="100" height="80" rx="8" fill="#e0f2f1" stroke="#009688" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#00695C">5. Docker Build</text>
+    <text x="50" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Multi-stage Dockerfile</text>
+    <text x="50" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Immutable tagging</text>
+    <text x="50" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">ledger-system:{sha}</text>
+    <!-- Docker icon -->
+    <rect x="35" y="92" width="30" height="16" rx="3" fill="#2496ED"/>
+    <text x="50" y="103" text-anchor="middle" font-family="Arial" font-size="8" fill="white">Docker</text>
+  </g>
+  
+  <!-- Arrow 5 -->
+  <path d="M 690 120 L 720 120" stroke="#4CAF50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  
+  <!-- Stage 6: Deploy -->
+  <g transform="translate(720, 80)">
+    <rect width="100" height="80" rx="8" fill="#f3e5f5" stroke="#9C27B0" stroke-width="2"/>
+    <text x="50" y="25" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#7B1FA2">6. Deploy</text>
+    <text x="50" y="45" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Staging / Prod</text>
+    <text x="50" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Health checks</text>
+    <text x="50" y="71" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Zero-downtime</text>
+    <!-- Deploy icon -->
+    <polygon points="50,92 60,108 40,108" fill="#9C27B0"/>
+  </g>
+  
+  <!-- Success indicator -->
+  <circle cx="850" cy="120" r="15" fill="#4CAF50"/>
+  <text x="850" y="124" text-anchor="middle" font-family="Arial" font-size="12" fill="white">✓</text>
+  
+  <!-- Key Metrics Box -->
+  <rect x="50" y="220" width="800" height="140" rx="4" fill="#fff" stroke="#ddd" stroke-width="1"/>
+  <text x="450" y="245" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#333">Pipeline Quality Gates</text>
+  
+  <!-- Left column -->
+  <text x="70" y="270" font-family="Segoe UI, Arial" font-size="10" font-weight="bold" fill="#333">Why Real PostgreSQL in CI?</text>
+  <text x="70" y="290" font-family="Segoe UI, Arial" font-size="9" fill="#666">• SQLite lacks row-level locking (SELECT FOR UPDATE)</text>
+  <text x="70" y="305" font-family="Segoe UI, Arial" font-size="9" fill="#666">• NUMERIC precision differs from FLOAT handling</text>
+  <text x="70" y="320" font-family="Segoe UI, Arial" font-size="9" fill="#666">• Constraint enforcement matches production behavior</text>
+  
+  <!-- Middle column -->
+  <text x="350" y="270" font-family="Segoe UI, Arial" font-size="10" font-weight="bold" fill="#333">Test Coverage Targets</text>
+  <text x="350" y="290" font-family="Segoe UI, Arial" font-size="9" fill="#666">Domain Layer: 95%+</text>
+  <text x="350" y="305" font-family="Segoe UI, Arial" font-size="9" fill="#666">Application Layer: 85%+</text>
+  <text x="350" y="320" font-family="Segoe UI, Arial" font-size="9" fill="#666">API Integration: 80%+</text>
+  
+  <!-- Right column -->
+  <text x="620" y="270" font-family="Segoe UI, Arial" font-size="10" font-weight="bold" fill="#333">Deployment Features</text>
+  <text x="620" y="290" font-family="Segoe UI, Arial" font-size="9" fill="#666">• Immutable image tags (git SHA)</text>
+  <text x="620" y="305" font-family="Segoe UI, Arial" font-size="9" fill="#666">• Automated rollback on health check failure</text>
+  <text x="620" y="320" font-family="Segoe UI, Arial" font-size="9" fill="#666">• Structured logging with Serilog</text>
+  
+  <!-- GitHub Actions badge -->
+  <rect x="50" y="340" width="120" height="25" rx="12" fill="#24292e"/>
+  <text x="110" y="357" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="white">GitHub Actions</text>
+  
+  <!-- Time indicator -->
+  <text x="450" y="365" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Total Pipeline Time: ~8-12 minutes</text>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowgreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50"/>
+    </marker>
+  </defs>
+</svg>

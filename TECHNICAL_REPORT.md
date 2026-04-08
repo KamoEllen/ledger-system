@@ -66,6 +66,115 @@ This method also produces a complete, permanent history of every movement. Each 
 
 ## 3. System Design and Choices
 
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-family="Segoe UI, Arial" font-size="20" font-weight="bold" fill="#1a1a1a">Ledger System Architecture</text>
+  <text x="400" y="50" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" fill="#666">Clean Architecture / Layered Design</text>
+  
+  <!-- Client Layer -->
+  <rect x="50" y="80" width="120" height="60" rx="4" fill="#e8f4f8" stroke="#2196F3" stroke-width="2"/>
+  <text x="110" y="105" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#1565C0">Angular SPA</text>
+  <text x="110" y="120" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">JWT Auth, Idempotency</text>
+  <text x="110" y="132" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Keys, UI State</text>
+  
+  <!-- Arrow to API -->
+  <path d="M 170 110 L 230 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="200" y="100" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">HTTPS/JSON</text>
+  
+  <!-- API Layer -->
+  <rect x="230" y="70" width="140" height="80" rx="4" fill="#fff3e0" stroke="#FF9800" stroke-width="2"/>
+  <text x="300" y="95" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#E65100">API Layer</text>
+  <text x="300" y="112" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Controllers, Middleware</text>
+  <text x="300" y="125" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Routing, Validation</text>
+  <text x="300" y="138" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Auth, Rate Limiting</text>
+  
+  <!-- Arrow to Application -->
+  <path d="M 370 110 L 430 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Application Layer -->
+  <rect x="430" y="70" width="140" height="80" rx="4" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2"/>
+  <text x="500" y="95" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#2E7D32">Application Layer</text>
+  <text x="500" y="112" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Use Cases, Services</text>
+  <text x="500" y="125" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">DTOs, Interfaces</text>
+  <text x="500" y="138" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">TransferService</text>
+  
+  <!-- Arrow to Domain -->
+  <path d="M 500 150 L 500 190" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Domain Layer (Center) -->
+  <rect x="400" y="190" width="200" height="100" rx="4" fill="#fce4ec" stroke="#E91E63" stroke-width="3"/>
+  <text x="500" y="215" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#C2185B">Domain Layer</text>
+  <text x="500" y="235" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#666">Zero Dependencies</text>
+  <text x="500" y="252" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Entities: Wallet, Transfer, LedgerEntry</text>
+  <text x="500" y="267" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Value Objects: Money</text>
+  <text x="500" y="282" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">Domain Events, Exceptions</text>
+  
+  <!-- Infrastructure Layer (Left of Domain) -->
+  <rect x="230" y="210" width="140" height="80" rx="4" fill="#f3e5f5" stroke="#9C27B0" stroke-width="2"/>
+  <text x="300" y="235" text-anchor="middle" font-family="Segoe UI, Arial" font-size="12" font-weight="bold" fill="#7B1FA2">Infrastructure</text>
+  <text x="300" y="252" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">EF Core Repositories</text>
+  <text x="300" y="265" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">PostgreSQL Integration</text>
+  <text x="300" y="278" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">JWT Token Service</text>
+  
+  <!-- Arrow Infrastructure to Domain -->
+  <path d="M 370 250 L 400 250" stroke="#9C27B0" stroke-width="2" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowhead)"/>
+  <text x="385" y="240" text-anchor="middle" font-family="Segoe UI, Arial" font-size="8" fill="#9C27B0">implements</text>
+  
+  <!-- Database -->
+  <rect x="50" y="200" width="120" height="80" rx="8" fill="#e3f2fd" stroke="#1976D2" stroke-width="2"/>
+  <ellipse cx="110" cy="220" rx="40" ry="12" fill="#1976D2" opacity="0.2"/>
+  <text x="110" y="225" text-anchor="middle" font-family="Segoe UI, Arial" font-size="11" font-weight="bold" fill="#0D47A1">PostgreSQL 16</text>
+  <text x="110" y="245" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">wallets, transfers</text>
+  <text x="110" y="258" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">ledger_entries</text>
+  <text x="110" y="271" text-anchor="middle" font-family="Segoe UI, Arial" font-size="9" fill="#666">idempotency_keys</text>
+  
+  <!-- Arrow DB to Infrastructure -->
+  <path d="M 170 240 L 230 240" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Docker Container (Visual indication) -->
+  <rect x="40" y="190" width="140" height="100" rx="4" fill="none" stroke="#2496ED" stroke-width="2" stroke-dasharray="8,4" opacity="0.5"/>
+  <text x="110" y="185" text-anchor="middle" font-family="Segoe UI, Arial" font-size="10" fill="#2496ED" font-weight="bold">Docker Container</text>
+  
+  <!-- Dependency Arrows Legend -->
+  <text x="600" y="220" font-family="Segoe UI, Arial" font-size="10" font-weight="bold" fill="#333">Dependency Flow:</text>
+  <line x1="600" y1="235" x2="640" y2="235" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="645" y="238" font-family="Segoe UI, Arial" font-size="9" fill="#666">calls</text>
+  <line x1="600" y1="255" x2="640" y2="255" stroke="#9C27B0" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrowhead)"/>
+  <text x="645" y="258" font-family="Segoe UI, Arial" font-size="9" fill="#9C27B0">implements</text>
+  
+  <!-- Key Features Box -->
+  <rect x="50" y="320" width="700" height="120" rx="4" fill="#fff" stroke="#ddd" stroke-width="1"/>
+  <text x="400" y="345" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="bold" fill="#333">Key Architectural Decisions</text>
+  
+  <text x="70" y="370" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="80" y="370" font-family="Segoe UI, Arial" font-size="10" fill="#666">Domain Layer has ZERO external dependencies — pure business logic</text>
+  
+  <text x="70" y="390" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="80" y="390" font-family="Segoe UI, Arial" font-size="10" fill="#666">Dependency Direction: API → Application → Domain ← Infrastructure</text>
+  
+  <text x="70" y="410" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="80" y="410" font-family="Segoe UI, Arial" font-size="10" fill="#666">Infrastructure implements interfaces defined by Application layer (DIP)</text>
+  
+  <text x="400" y="370" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="410" y="370" font-family="Segoe UI, Arial" font-size="10" fill="#666">ACID transactions span multiple aggregates (Wallet + LedgerEntry)</text>
+  
+  <text x="400" y="390" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="410" y="390" font-family="Segoe UI, Arial" font-size="10" fill="#666">UUID v4 for all primary keys — distributed-system ready</text>
+  
+  <text x="400" y="410" font-family="Segoe UI, Arial" font-size="10" fill="#333">•</text>
+  <text x="410" y="410" font-family="Segoe UI, Arial" font-size="10" fill="#666">NUMERIC(19,4) for exact decimal arithmetic — never float for money</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+</svg>
+         
 ### 3.1 Data Structure
 
 All money columns in the database use the `NUMERIC(19,4)` data type. This stores exact decimal values. To understand why this matters, consider what happens with the more common `float` or `double` types.

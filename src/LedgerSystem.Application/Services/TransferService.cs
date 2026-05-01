@@ -43,6 +43,9 @@ public sealed class TransferService : ITransferService
     ///   9. Persist everything in one SaveChanges
     ///  10. Mark transfer Completed, persist, commit
     /// Any exception rolls back the entire transaction — no partial state is stored.
+    ///
+    /// ExecuteInTransactionAsync wraps the transaction inside CreateExecutionStrategy
+    /// so that NpgsqlRetryingExecutionStrategy and the manual transaction coexist.
     /// </summary>
     public async Task<TransferResultDto> ExecuteAsync(
         TransferRequest request, CancellationToken ct = default)
@@ -52,14 +55,12 @@ public sealed class TransferService : ITransferService
         if (existing is not null)
             throw new DuplicateTransferException();
 
-        await _uow.BeginTransactionAsync(ct);
-        try
+        // ── 2–10. Everything inside one strategy-aware transaction ────────────
+        return await _uow.ExecuteInTransactionAsync(async innerCt =>
         {
             // ── 2. Lock wallets in ascending UUID order ────────────────────────
-            // Both concurrent T1(A→B) and T2(B→A) will always lock the lower
-            // UUID first, so they queue rather than deadlock.
             var (source, destination) = await _wallets.LockPairAsync(
-                request.SourceWalletId, request.DestinationWalletId, ct);
+                request.SourceWalletId, request.DestinationWalletId, innerCt);
 
             // ── 3. Ownership check ────────────────────────────────────────────
             if (source.UserId != request.RequestingUserId)
@@ -83,7 +84,7 @@ public sealed class TransferService : ITransferService
                 request.IdempotencyKey,
                 request.Description);
 
-            await _transfers.AddAsync(transfer, ct);
+            await _transfers.AddAsync(transfer, innerCt);
 
             // ── 7. Debit source (throws InsufficientFundsException if balance low) ──
             var sourceBalanceAfter = source.Debit(request.Amount);
@@ -104,26 +105,20 @@ public sealed class TransferService : ITransferService
                 description: request.Description);
 
             // ── 9. Persist ledger entries + updated wallet balances ───────────
-            await _ledgerEntries.AddRangeAsync(new[] { debitEntry, creditEntry }, ct);
-            await _wallets.UpdateAsync(source, ct);
-            await _wallets.UpdateAsync(destination, ct);
+            await _ledgerEntries.AddRangeAsync(new[] { debitEntry, creditEntry }, innerCt);
+            await _wallets.UpdateAsync(source, innerCt);
+            await _wallets.UpdateAsync(destination, innerCt);
 
-            // ── 10. Mark completed and commit ─────────────────────────────────
+            // ── 10. Mark completed and save (commit handled by ExecuteInTransactionAsync) ──
             transfer.MarkCompleted();
-            await _transfers.UpdateAsync(transfer, ct);
-            await _uow.SaveChangesAsync(ct);
-            await _uow.CommitTransactionAsync(ct);
+            await _transfers.UpdateAsync(transfer, innerCt);
+            await _uow.SaveChangesAsync(innerCt);
 
             return new TransferResultDto(
                 MapToDto(transfer),
                 sourceBalanceAfter,
                 destBalanceAfter);
-        }
-        catch
-        {
-            await _uow.RollbackTransactionAsync(ct);
-            throw;
-        }
+        }, ct);
     }
 
     public async Task<TransferDto> GetByIdAsync(
@@ -132,13 +127,12 @@ public sealed class TransferService : ITransferService
         var transfer = await _transfers.FindByIdAsync(transferId, ct)
             ?? throw new TransferNotFoundException(transferId);
 
-        // Verify the requesting user owns either the source or destination wallet
         var userWallets = await _wallets.GetByUserIdAsync(requestingUserId, ct);
         var userWalletIds = userWallets.Select(w => w.Id).ToHashSet();
 
         if (!userWalletIds.Contains(transfer.SourceWalletId) &&
             !userWalletIds.Contains(transfer.DestinationWalletId))
-            throw new TransferNotFoundException(transferId); // Return 404 not 403 — don't leak existence
+            throw new TransferNotFoundException(transferId); // 404 not 403 — don't leak existence
 
         return MapToDto(transfer);
     }

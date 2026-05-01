@@ -40,6 +40,10 @@ public sealed class WalletRepository : IWalletRepository
     /// Locks both wallets with SELECT FOR UPDATE in a single query.
     /// Wallets are always locked in ascending UUID order to prevent deadlocks
     /// when two concurrent transfers involve the same pair of wallets.
+    ///
+    /// NpgsqlRetryingExecutionStrategy does not support user-initiated
+    /// transactions directly. Wrapping in CreateExecutionStrategy allows
+    /// the retry strategy and the caller's manual transaction to coexist.
     /// </summary>
     public async Task<(Wallet source, Wallet destination)> LockPairAsync(
         Guid sourceId, Guid destinationId, CancellationToken ct = default)
@@ -51,19 +55,24 @@ public sealed class WalletRepository : IWalletRepository
             .OrderBy(id => id)
             .ToArray();
 
-        var wallets = await _db.Wallets
-            .FromSqlRaw(
-                "SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE",
-                (object)orderedIds)
-            .ToListAsync(ct);
+        var strategy = _db.Database.CreateExecutionStrategy();
 
-        var source = wallets.FirstOrDefault(w => w.Id == sourceId)
-            ?? throw new WalletNotFoundException(sourceId);
+        return await strategy.ExecuteAsync(async () =>
+        {
+            var wallets = await _db.Wallets
+                .FromSqlRaw(
+                    "SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE",
+                    (object)orderedIds)
+                .ToListAsync(ct);
 
-        var destination = wallets.FirstOrDefault(w => w.Id == destinationId)
-            ?? throw new WalletNotFoundException(destinationId);
+            var source = wallets.FirstOrDefault(w => w.Id == sourceId)
+                ?? throw new WalletNotFoundException(sourceId);
 
-        return (source, destination);
+            var destination = wallets.FirstOrDefault(w => w.Id == destinationId)
+                ?? throw new WalletNotFoundException(destinationId);
+
+            return (source, destination);
+        });
     }
 
     public async Task AddAsync(Wallet wallet, CancellationToken ct = default)

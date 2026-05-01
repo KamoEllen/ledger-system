@@ -154,6 +154,12 @@ export class TransferCreateComponent implements OnInit {
       },
       error: () => this.walletsLoading.set(false)
     });
+
+    // Auto-fill currency when source wallet changes so it always matches
+    this.form.get('sourceWalletId')!.valueChanges.subscribe(id => {
+      const wallet = this.wallets().find(w => w.id === id);
+      if (wallet) this.form.patchValue({ currency: wallet.currency });
+    });
   }
 
   submit(): void {
@@ -169,7 +175,11 @@ export class TransferCreateComponent implements OnInit {
       description: v.description || undefined
     }).subscribe({
       next: res => { this.result.set(res); this.loading.set(false); },
-      error: err => { this.error.set(err.error?.message ?? 'Transfer failed'); this.loading.set(false); }
+      // err.error is the parsed JSON body: { error: { code, message } }
+      error: err => {
+        this.error.set(err.error?.error?.message ?? 'Transfer failed');
+        this.loading.set(false);
+      }
     });
   }
 

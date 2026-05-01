@@ -75,7 +75,7 @@ public sealed class JwtTokenService : ITokenService
             };
 
             var principal = handler.ValidateToken(accessToken, validationParams, out _);
-            var userId = principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
             return Guid.TryParse(userId, out var id) ? id : null;
         }

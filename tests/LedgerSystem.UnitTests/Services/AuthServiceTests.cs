@@ -1,12 +1,13 @@
+using Xunit;
 using FluentAssertions;
 using LedgerSystem.Application.DTOs.Auth;
 using LedgerSystem.Application.Interfaces;
 using LedgerSystem.Application.Interfaces.Repositories;
 using LedgerSystem.Application.Interfaces.Services;
 using LedgerSystem.Application.Services;
+using LedgerSystem.Application.Settings;
 using LedgerSystem.Domain.Entities;
 using LedgerSystem.Domain.Exceptions;
-using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -23,15 +24,10 @@ public sealed class AuthServiceTests
 
     public AuthServiceTests()
     {
-        var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Jwt:RefreshTokenExpiryDays"] = "7"
-            })
-            .Build();
+        var authSettings = new AuthSettings { RefreshTokenExpiryDays = 7 };
 
         _service = new AuthService(
-            _users, _refreshTokens, _passwordService, _tokenService, _uow, config);
+            _users, _refreshTokens, _passwordService, _tokenService, _uow, authSettings);
 
         // Default: token service returns sensible values
         _tokenService.GenerateAccessToken(Arg.Any<User>()).Returns("access-token");

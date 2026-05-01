@@ -11,11 +11,8 @@ public sealed class User
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
-    // EF Core navigation property — not exposed as a collection to mutate
-    private readonly List<Wallet> _wallets = new();
-    public IReadOnlyList<Wallet> Wallets => _wallets.AsReadOnly();
+    public ICollection<Wallet> Wallets { get; set; } = new List<Wallet>();
 
-    // Required by EF Core
     private User() { Email = string.Empty; PasswordHash = string.Empty; }
 
     private User(Guid id, string email, string passwordHash, UserRole role, DateTime now)

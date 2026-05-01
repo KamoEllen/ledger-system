@@ -1,3 +1,4 @@
+using Xunit;
 using FluentAssertions;
 using LedgerSystem.Domain.Entities;
 using LedgerSystem.Domain.Exceptions;

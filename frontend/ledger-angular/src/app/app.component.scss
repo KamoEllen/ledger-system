@@ -1,0 +1,13 @@
+.app-shell {
+  min-height: 100vh;
+  background: #050505;
+}
+
+.main-content {
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+
+  &.with-sidebar {
+    margin-left: 240px;
+  }
+}

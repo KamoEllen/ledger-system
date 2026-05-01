@@ -2,10 +2,10 @@ using LedgerSystem.Application.DTOs.Auth;
 using LedgerSystem.Application.Interfaces;
 using LedgerSystem.Application.Interfaces.Repositories;
 using LedgerSystem.Application.Interfaces.Services;
+using LedgerSystem.Application.Settings;
 using LedgerSystem.Domain.Entities;
 using LedgerSystem.Domain.Enums;
 using LedgerSystem.Domain.Exceptions;
-using Microsoft.Extensions.Configuration;
 
 namespace LedgerSystem.Application.Services;
 
@@ -24,14 +24,14 @@ public sealed class AuthService : IAuthService
         IPasswordService passwordService,
         ITokenService tokenService,
         IUnitOfWork uow,
-        IConfiguration config)
+        AuthSettings authSettings)
     {
         _users = users;
         _refreshTokens = refreshTokens;
         _passwordService = passwordService;
         _tokenService = tokenService;
         _uow = uow;
-        _refreshTokenExpiryDays = config.GetValue<int>("Jwt:RefreshTokenExpiryDays", 7);
+        _refreshTokenExpiryDays = authSettings.RefreshTokenExpiryDays;
     }
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)

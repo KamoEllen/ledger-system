@@ -1,3 +1,4 @@
+using Xunit;
 using FluentAssertions;
 using LedgerSystem.Application.DTOs.Wallets;
 using LedgerSystem.Application.Interfaces;

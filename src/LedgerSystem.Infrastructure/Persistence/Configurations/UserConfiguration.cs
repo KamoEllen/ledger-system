@@ -61,8 +61,8 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Configure backing field for the read-only Wallets collection
-        builder.Navigation(u => u.Wallets)
-            .HasField("_wallets")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+        // builder.Navigation(u => u.Wallets)
+        //     .HasField("_wallets")
+        //     .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

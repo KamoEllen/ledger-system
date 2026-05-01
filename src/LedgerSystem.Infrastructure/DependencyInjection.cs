@@ -2,6 +2,7 @@ using LedgerSystem.Application.Interfaces;
 using LedgerSystem.Application.Interfaces.Repositories;
 using LedgerSystem.Application.Interfaces.Services;
 using LedgerSystem.Application.Services;
+using LedgerSystem.Application.Settings;
 using LedgerSystem.Infrastructure.BackgroundServices;
 using LedgerSystem.Infrastructure.Persistence;
 using LedgerSystem.Infrastructure.Repositories;
@@ -32,6 +33,9 @@ public static class DependencyInjection
 
         // ── JWT settings ──────────────────────────────────────────────────────
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
+        services.AddSingleton(new AuthSettings { RefreshTokenExpiryDays = jwtOptions.RefreshTokenExpiryDays });
 
         // ── Unit of Work ──────────────────────────────────────────────────────
         services.AddScoped<IUnitOfWork, UnitOfWork>();

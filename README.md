@@ -144,6 +144,8 @@ dotnet ef database update \
 Set `ASPNETCORE_ENVIRONMENT=Development` to expose Swagger UI.
 
 ```bash
+ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/LedgerSystem.API -- --seed
+
 ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/LedgerSystem.API
 ```
 

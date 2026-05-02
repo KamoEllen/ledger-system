@@ -152,6 +152,8 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
+        c.OperationFilter<LedgerSystem.API.Swagger.IdempotencyKeyOperationFilter>();
+
         c.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "Ledger System API",

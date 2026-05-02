@@ -2091,3 +2091,1356 @@ DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error
    at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
    at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
 2026-05-02 13:28:54.808 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/transfers - 500 null application/json 568.0154ms
+2026-05-02 13:36:18.482 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/transfers - application/json 220
+2026-05-02 13:36:18.484 +02:00 [INF] CORS policy execution failed.
+2026-05-02 13:36:18.486 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 13:36:18.583 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[@__key_0='?', @__userId_1='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT i.key, i.user_id, i.created_at, i.expires_at, i.request_path, i.response_body, i.response_status
+FROM idempotency_keys AS i
+WHERE i.key = @__key_0 AND i.user_id = @__userId_1 AND i.expires_at > now()
+LIMIT 1
+2026-05-02 13:36:18.584 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 13:36:18.585 +02:00 [INF] Route matched with {action = "CreateTransfer", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateTransfer(LedgerSystem.Application.DTOs.Transfers.CreateTransferRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 13:36:18.596 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.idempotency_key = @__key_0
+LIMIT 1
+2026-05-02 13:36:18.599 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[p0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE
+2026-05-02 13:36:18.612 +02:00 [ERR] Failed executing DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Decimal), @p2='?' (DbType = Decimal), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?' (DbType = Guid), @p8='?' (DbType = Guid), @p9='?' (DbType = Decimal), @p10='?' (DbType = Decimal), @p11='?' (DbType = DateTime), @p12='?', @p13='?', @p14='?' (DbType = Guid), @p15='?' (DbType = Guid), @p25='?' (DbType = Guid), @p16='?' (DbType = Decimal), @p17='?' (DbType = DateTime), @p18='?' (DbType = DateTime), @p19='?', @p20='?', @p21='?' (DbType = Guid), @p22='?', @p23='?' (DbType = Guid), @p24='?', @p31='?' (DbType = Guid), @p26='?' (DbType = Decimal), @p27='?' (DbType = DateTime), @p28='?', @p29='?' (DbType = Boolean), @p30='?' (DbType = Guid), @p37='?' (DbType = Guid), @p32='?' (DbType = Decimal), @p33='?' (DbType = DateTime), @p34='?', @p35='?' (DbType = Boolean), @p36='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15);
+UPDATE transfers SET amount = @p16, completed_at = @p17, created_at = @p18, currency = @p19, description = @p20, destination_wallet_id = @p21, idempotency_key = @p22, source_wallet_id = @p23, status = @p24
+WHERE id = @p25;
+UPDATE wallets SET balance = @p26, created_at = @p27, currency = @p28, is_active = @p29, user_id = @p30
+WHERE id = @p31;
+UPDATE wallets SET balance = @p32, created_at = @p33, currency = @p34, is_active = @p35, user_id = @p36
+WHERE id = @p37;
+2026-05-02 13:36:18.618 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'LedgerSystem.Infrastructure.Persistence.LedgerDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-05-02 13:36:18.628 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API) in 40.936ms
+2026-05-02 13:36:18.628 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 13:36:18.629 +02:00 [ERR] HTTP POST /api/transfers responded 500 in 145.152 ms
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at LedgerSystem.Application.Services.TransferService.<>c__DisplayClass5_0.<<ExecuteAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 115
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 44
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 51
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.ExecuteInTransactionAsync[T](Func`2 operation, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 39
+   at LedgerSystem.Application.Services.TransferService.ExecuteAsync(TransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 59
+   at LedgerSystem.API.Controllers.TransfersController.CreateTransfer(CreateTransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/TransfersController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 78
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 13:36:18.638 +02:00 [ERR] Unhandled exception
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at LedgerSystem.Application.Services.TransferService.<>c__DisplayClass5_0.<<ExecuteAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 115
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 44
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 51
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.ExecuteInTransactionAsync[T](Func`2 operation, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 39
+   at LedgerSystem.Application.Services.TransferService.ExecuteAsync(TransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 59
+   at LedgerSystem.API.Controllers.TransfersController.CreateTransfer(CreateTransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/TransfersController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 78
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 13:36:18.649 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/transfers - 500 null application/json 166.5547ms
+2026-05-02 13:36:53.558 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/transfers - application/json 220
+2026-05-02 13:36:53.564 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?', @__userId_1='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT i.key, i.user_id, i.created_at, i.expires_at, i.request_path, i.response_body, i.response_status
+FROM idempotency_keys AS i
+WHERE i.key = @__key_0 AND i.user_id = @__userId_1 AND i.expires_at > now()
+LIMIT 1
+2026-05-02 13:36:53.566 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 13:36:53.567 +02:00 [INF] Route matched with {action = "CreateTransfer", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateTransfer(LedgerSystem.Application.DTOs.Transfers.CreateTransferRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 13:36:53.570 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.idempotency_key = @__key_0
+LIMIT 1
+2026-05-02 13:36:53.574 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[p0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE
+2026-05-02 13:36:53.582 +02:00 [ERR] Failed executing DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Decimal), @p2='?' (DbType = Decimal), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?' (DbType = Guid), @p8='?' (DbType = Guid), @p9='?' (DbType = Decimal), @p10='?' (DbType = Decimal), @p11='?' (DbType = DateTime), @p12='?', @p13='?', @p14='?' (DbType = Guid), @p15='?' (DbType = Guid), @p25='?' (DbType = Guid), @p16='?' (DbType = Decimal), @p17='?' (DbType = DateTime), @p18='?' (DbType = DateTime), @p19='?', @p20='?', @p21='?' (DbType = Guid), @p22='?', @p23='?' (DbType = Guid), @p24='?', @p31='?' (DbType = Guid), @p26='?' (DbType = Decimal), @p27='?' (DbType = DateTime), @p28='?', @p29='?' (DbType = Boolean), @p30='?' (DbType = Guid), @p37='?' (DbType = Guid), @p32='?' (DbType = Decimal), @p33='?' (DbType = DateTime), @p34='?', @p35='?' (DbType = Boolean), @p36='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15);
+UPDATE transfers SET amount = @p16, completed_at = @p17, created_at = @p18, currency = @p19, description = @p20, destination_wallet_id = @p21, idempotency_key = @p22, source_wallet_id = @p23, status = @p24
+WHERE id = @p25;
+UPDATE wallets SET balance = @p26, created_at = @p27, currency = @p28, is_active = @p29, user_id = @p30
+WHERE id = @p31;
+UPDATE wallets SET balance = @p32, created_at = @p33, currency = @p34, is_active = @p35, user_id = @p36
+WHERE id = @p37;
+2026-05-02 13:36:53.590 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'LedgerSystem.Infrastructure.Persistence.LedgerDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-05-02 13:36:53.595 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API) in 27.3552ms
+2026-05-02 13:36:53.596 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 13:36:53.597 +02:00 [ERR] HTTP POST /api/transfers responded 500 in 38.028 ms
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at LedgerSystem.Application.Services.TransferService.<>c__DisplayClass5_0.<<ExecuteAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 115
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 44
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 51
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.ExecuteInTransactionAsync[T](Func`2 operation, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 39
+   at LedgerSystem.Application.Services.TransferService.ExecuteAsync(TransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 59
+   at LedgerSystem.API.Controllers.TransfersController.CreateTransfer(CreateTransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/TransfersController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 78
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 13:36:53.604 +02:00 [ERR] Unhandled exception
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "ledger_entries" violates foreign key constraint "FK_ledger_entries_transfers_transfer_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: ledger_entries
+    ConstraintName: FK_ledger_entries_transfers_transfer_id
+    File: ri_triggers.c
+    Line: 2463
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at LedgerSystem.Application.Services.TransferService.<>c__DisplayClass5_0.<<ExecuteAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 115
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 44
+--- End of stack trace from previous location ---
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.<>c__DisplayClass6_0`1.<<ExecuteInTransactionAsync>b__0>d.MoveNext() in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 51
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at LedgerSystem.Infrastructure.Persistence.UnitOfWork.ExecuteInTransactionAsync[T](Func`2 operation, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Infrastructure/Persistence/UnitOfWork.cs:line 39
+   at LedgerSystem.Application.Services.TransferService.ExecuteAsync(TransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/TransferService.cs:line 59
+   at LedgerSystem.API.Controllers.TransfersController.CreateTransfer(CreateTransferRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/TransfersController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 78
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 13:36:53.611 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/transfers - 500 null application/json 53.4572ms
+2026-05-02 14:03:03.541 +02:00 [INF] Application is shutting down...
+2026-05-02 14:03:03.556 +02:00 [INF] Idempotency cleanup service stopped.
+2026-05-02 14:03:53.774 +02:00 [INF] User profile is available. Using '/home/ellen/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-05-02 14:03:53.962 +02:00 [INF] Idempotency cleanup service started.
+2026-05-02 14:03:54.273 +02:00 [INF] Now listening on: http://localhost:5000
+2026-05-02 14:03:54.280 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-02 14:03:54.281 +02:00 [INF] Hosting environment: Development
+2026-05-02 14:03:54.281 +02:00 [INF] Content root path: /developer/ledger-system/src/LedgerSystem.API
+2026-05-02 14:04:52.628 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:04:52.628 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - null null
+2026-05-02 14:04:52.712 +02:00 [WRN] Failed to determine the https port for redirect.
+2026-05-02 14:04:52.716 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:04:52.716 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:04:52.720 +02:00 [INF] HTTP OPTIONS /api/wallets responded 204 in 8.300 ms
+2026-05-02 14:04:52.720 +02:00 [INF] HTTP OPTIONS /api/transfers responded 204 in 8.315 ms
+2026-05-02 14:04:52.731 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - 204 null null 105.1529ms
+2026-05-02 14:04:52.731 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - 204 null null 104.7509ms
+2026-05-02 14:04:52.743 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:04:52.743 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:04:52.754 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:04:52.754 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:04:53.062 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:04:53.062 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:04:53.105 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:04:53.106 +02:00 [INF] Route matched with {action = "GetTransfers", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTransfers(Int32, Int32, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:04:54.826 +02:00 [INF] Executed DbCommand (70ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:04:54.826 +02:00 [INF] Executed DbCommand (70ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:04:55.003 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:04:55.066 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 1953.3136ms
+2026-05-02 14:04:55.067 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:04:55.070 +02:00 [INF] HTTP GET /api/wallets responded 200 in 2316.505 ms
+2026-05-02 14:04:55.086 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 2343.1762ms
+2026-05-02 14:04:55.140 +02:00 [INF] Executed DbCommand (80ms) [Parameters=[@__ids_0='?' (DbType = Object), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+ORDER BY t.created_at DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-05-02 14:04:55.175 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__ids_0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+2026-05-02 14:04:55.184 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Common.PagedResponse`1[[LedgerSystem.Application.DTOs.Transfers.TransferDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:04:55.207 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API) in 2097.7332ms
+2026-05-02 14:04:55.208 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:04:55.210 +02:00 [INF] HTTP GET /api/transfers responded 200 in 2455.691 ms
+2026-05-02 14:04:55.211 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - 200 null application/json; charset=utf-8 2467.9589ms
+2026-05-02 14:05:11.803 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-02 14:05:11.820 +02:00 [INF] HTTP GET / responded 404 in 15.644 ms
+2026-05-02 14:05:11.822 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 404 0 null 18.7129ms
+2026-05-02 14:05:11.824 +02:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/, Response status code: 404
+2026-05-02 14:05:15.508 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.html - null null
+2026-05-02 14:05:15.585 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 77.6761ms
+2026-05-02 14:05:15.857 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - null null
+2026-05-02 14:05:16.005 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 148.6237ms
+2026-05-02 14:06:02.603 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 60
+2026-05-02 14:06:02.605 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:06:02.606 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:06:02.610 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:06:02.623 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:06:02.782 +02:00 [INF] Executed DbCommand (5ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:06:02.829 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 202.7013ms
+2026-05-02 14:06:02.829 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:06:02.831 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 226.222 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:06:02.847 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:06:02.854 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 251.2324ms
+2026-05-02 14:06:17.318 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 61
+2026-05-02 14:06:17.320 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:06:17.322 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:06:17.324 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:06:17.325 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:06:17.355 +02:00 [INF] Executed DbCommand (6ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:06:17.434 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Auth.AuthResponse'.
+2026-05-02 14:06:17.440 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 105.017ms
+2026-05-02 14:06:17.441 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:06:17.442 +02:00 [INF] HTTP POST /api/auth/login responded 200 in 121.598 ms
+2026-05-02 14:06:17.443 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 200 null application/json; charset=utf-8 125.0652ms
+2026-05-02 14:06:52.824 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=20 - null null
+2026-05-02 14:06:52.829 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:06:52.830 +02:00 [INF] Route matched with {action = "GetTransfers", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTransfers(Int32, Int32, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:06:52.838 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:06:52.851 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[@__ids_0='?' (DbType = Object), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+ORDER BY t.created_at DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-05-02 14:06:52.856 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__ids_0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+2026-05-02 14:06:52.869 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Common.PagedResponse`1[[LedgerSystem.Application.DTOs.Transfers.TransferDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:06:52.870 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API) in 38.5685ms
+2026-05-02 14:06:52.871 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:06:52.872 +02:00 [INF] HTTP GET /api/transfers responded 200 in 46.662 ms
+2026-05-02 14:06:52.873 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=20 - 200 null application/json; charset=utf-8 48.6755ms
+2026-05-02 14:07:03.596 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:07:03.601 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:07:03.603 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:07:03.612 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:07:03.616 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:07:03.620 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 15.9258ms
+2026-05-02 14:07:03.624 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:07:03.625 +02:00 [INF] HTTP GET /api/wallets responded 200 in 25.567 ms
+2026-05-02 14:07:03.628 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 31.913ms
+2026-05-02 14:10:01.857 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.html - null null
+2026-05-02 14:10:01.858 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 1.4921ms
+2026-05-02 14:10:02.080 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - null null
+2026-05-02 14:10:02.111 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 31.8026ms
+2026-05-02 14:10:21.947 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/register - application/json 57
+2026-05-02 14:10:21.948 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:10:21.948 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:10:21.949 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API)'
+2026-05-02 14:10:21.956 +02:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(LedgerSystem.Application.DTOs.Auth.RegisterRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:10:22.095 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM users AS u
+    WHERE u.email = @__ToLowerInvariant_0)
+2026-05-02 14:10:22.099 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API) in 139.4139ms
+2026-05-02 14:10:22.101 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API)'
+2026-05-02 14:10:22.103 +02:00 [ERR] HTTP POST /api/auth/register responded 500 in 155.457 ms
+LedgerSystem.Domain.Exceptions.DuplicateEmailException: A user with email 'kamo@gmail.com' already exists.
+   at LedgerSystem.Application.Services.AuthService.RegisterAsync(RegisterRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 40
+   at LedgerSystem.API.Controllers.AuthController.Register(RegisterRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:10:22.107 +02:00 [WRN] Domain exception: EMAIL_ALREADY_EXISTS
+LedgerSystem.Domain.Exceptions.DuplicateEmailException: A user with email 'kamo@gmail.com' already exists.
+   at LedgerSystem.Application.Services.AuthService.RegisterAsync(RegisterRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 40
+   at LedgerSystem.API.Controllers.AuthController.Register(RegisterRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:10:22.110 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/register - 409 null application/json 163.004ms
+2026-05-02 14:10:48.430 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 61
+2026-05-02 14:10:48.432 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:10:48.434 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:10:48.438 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:10:48.441 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:10:48.446 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:10:48.892 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 449.772ms
+2026-05-02 14:10:48.893 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:10:48.894 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 462.248 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:10:48.898 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:10:48.901 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 471.4258ms
+2026-05-02 14:10:55.212 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 61
+2026-05-02 14:10:55.212 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:10:55.213 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:10:55.214 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:10:55.216 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:10:55.219 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:10:55.570 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 353.1164ms
+2026-05-02 14:10:55.570 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:10:55.571 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 358.916 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:10:55.574 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:10:55.576 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 364.3745ms
+2026-05-02 14:11:07.791 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/register - application/json 61
+2026-05-02 14:11:07.793 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:11:07.795 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:11:07.798 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API)'
+2026-05-02 14:11:07.803 +02:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(LedgerSystem.Application.DTOs.Auth.RegisterRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:11:07.819 +02:00 [INF] Executed DbCommand (5ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM users AS u
+    WHERE u.email = @__ToLowerInvariant_0)
+2026-05-02 14:11:08.297 +02:00 [INF] Executed DbCommand (6ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTime), @p2='?', @p3='?', @p4='?', @p5='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO users (id, created_at, email, password_hash, role, updated_at)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5);
+2026-05-02 14:11:08.321 +02:00 [INF] Executing ObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Auth.AuthResponse'.
+2026-05-02 14:11:08.323 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API) in 516.2508ms
+2026-05-02 14:11:08.326 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Register (LedgerSystem.API)'
+2026-05-02 14:11:08.328 +02:00 [INF] HTTP POST /api/auth/register responded 201 in 535.173 ms
+2026-05-02 14:11:08.329 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/register - 201 null application/json; charset=utf-8 538.2694ms
+2026-05-02 14:11:26.431 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 61
+2026-05-02 14:11:26.433 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:11:26.434 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:11:26.436 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:11:26.437 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:11:26.443 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:11:26.804 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Auth.AuthResponse'.
+2026-05-02 14:11:26.805 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 367.3679ms
+2026-05-02 14:11:26.806 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:11:26.807 +02:00 [INF] HTTP POST /api/auth/login responded 200 in 374.475 ms
+2026-05-02 14:11:26.808 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 200 null application/json; charset=utf-8 376.8554ms
+2026-05-02 14:11:51.996 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/wallets - application/json 23
+2026-05-02 14:11:51.998 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:11:52.001 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:11:52.004 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API)'
+2026-05-02 14:11:52.018 +02:00 [INF] Route matched with {action = "CreateWallet", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateWallet(LedgerSystem.Application.DTOs.Wallets.CreateWalletRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:11:52.052 +02:00 [INF] Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:11:52.080 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTime), @p2='?', @p3='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO wallets (id, created_at, currency, user_id)
+VALUES (@p0, @p1, @p2, @p3)
+RETURNING balance, is_active;
+2026-05-02 14:11:52.100 +02:00 [INF] Executing CreatedAtActionResult, writing value of type 'LedgerSystem.Application.DTOs.Wallets.WalletDto'.
+2026-05-02 14:11:52.124 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API) in 103.8552ms
+2026-05-02 14:11:52.125 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API)'
+2026-05-02 14:11:52.126 +02:00 [INF] HTTP POST /api/wallets responded 201 in 127.884 ms
+2026-05-02 14:11:52.127 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/wallets - 201 null application/json; charset=utf-8 130.0238ms
+2026-05-02 14:12:21.936 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/wallets - application/json 41
+2026-05-02 14:12:21.937 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:12:21.938 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:12:21.940 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API)'
+2026-05-02 14:12:21.943 +02:00 [INF] Route matched with {action = "CreateWallet", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateWallet(LedgerSystem.Application.DTOs.Wallets.CreateWalletRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:12:21.953 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:12:21.958 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API) in 11.8171ms
+2026-05-02 14:12:21.959 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.CreateWallet (LedgerSystem.API)'
+2026-05-02 14:12:21.960 +02:00 [ERR] HTTP POST /api/wallets responded 500 in 23.380 ms
+LedgerSystem.Domain.Exceptions.WalletAlreadyExistsException: You already have a USD wallet. Only one wallet per currency is allowed.
+   at LedgerSystem.Application.Services.WalletService.CreateAsync(Guid userId, CreateWalletRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/WalletService.cs:line 53
+   at LedgerSystem.API.Controllers.WalletsController.CreateWallet(CreateWalletRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/WalletsController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:12:21.968 +02:00 [WRN] Domain exception: WALLET_ALREADY_EXISTS
+LedgerSystem.Domain.Exceptions.WalletAlreadyExistsException: You already have a USD wallet. Only one wallet per currency is allowed.
+   at LedgerSystem.Application.Services.WalletService.CreateAsync(Guid userId, CreateWalletRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/WalletService.cs:line 53
+   at LedgerSystem.API.Controllers.WalletsController.CreateWallet(CreateWalletRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/WalletsController.cs:line 56
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:12:21.979 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/wallets - 409 null application/json 42.7924ms
+2026-05-02 14:13:44.930 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.html - null null
+2026-05-02 14:13:44.932 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 1.5936ms
+2026-05-02 14:13:45.128 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - null null
+2026-05-02 14:13:45.160 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 32.2119ms
+2026-05-02 14:14:02.273 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 61
+2026-05-02 14:14:02.274 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:14:02.277 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:14:02.279 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:14:02.280 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:14:02.287 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:14:02.295 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Auth.AuthResponse'.
+2026-05-02 14:14:02.298 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 16.5886ms
+2026-05-02 14:14:02.301 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:14:02.304 +02:00 [INF] HTTP POST /api/auth/login responded 200 in 29.583 ms
+2026-05-02 14:14:02.305 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 200 null application/json; charset=utf-8 32.533ms
+2026-05-02 14:15:56.314 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/transfers - application/json 220
+2026-05-02 14:15:56.315 +02:00 [INF] CORS policy execution failed.
+2026-05-02 14:15:56.315 +02:00 [INF] Request origin http://localhost:5000 does not have permission to access the resource.
+2026-05-02 14:15:56.461 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[@__key_0='?', @__userId_1='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT i.key, i.user_id, i.created_at, i.expires_at, i.request_path, i.response_body, i.response_status
+FROM idempotency_keys AS i
+WHERE i.key = @__key_0 AND i.user_id = @__userId_1 AND i.expires_at > now()
+LIMIT 1
+2026-05-02 14:15:56.466 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 14:15:56.476 +02:00 [INF] Route matched with {action = "CreateTransfer", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateTransfer(LedgerSystem.Application.DTOs.Transfers.CreateTransferRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:15:56.530 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__key_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.idempotency_key = @__key_0
+LIMIT 1
+2026-05-02 14:15:56.588 +02:00 [INF] Executed DbCommand (6ms) [Parameters=[p0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE
+2026-05-02 14:15:56.733 +02:00 [INF] Executed DbCommand (19ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Decimal), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?', @p8='?' (DbType = Guid), @p9='?', @p15='?' (DbType = Guid), @p10='?' (DbType = Decimal), @p11='?' (DbType = DateTime), @p12='?', @p13='?' (DbType = Boolean), @p14='?' (DbType = Guid), @p21='?' (DbType = Guid), @p16='?' (DbType = Decimal), @p17='?' (DbType = DateTime), @p18='?', @p19='?' (DbType = Boolean), @p20='?' (DbType = Guid), @p22='?' (DbType = Guid), @p23='?' (DbType = Decimal), @p24='?' (DbType = Decimal), @p25='?' (DbType = DateTime), @p26='?', @p27='?', @p28='?' (DbType = Guid), @p29='?' (DbType = Guid), @p30='?' (DbType = Guid), @p31='?' (DbType = Decimal), @p32='?' (DbType = Decimal), @p33='?' (DbType = DateTime), @p34='?', @p35='?', @p36='?' (DbType = Guid), @p37='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO transfers (id, amount, completed_at, created_at, currency, description, destination_wallet_id, idempotency_key, source_wallet_id, status)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+UPDATE wallets SET balance = @p10, created_at = @p11, currency = @p12, is_active = @p13, user_id = @p14
+WHERE id = @p15;
+UPDATE wallets SET balance = @p16, created_at = @p17, currency = @p18, is_active = @p19, user_id = @p20
+WHERE id = @p21;
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p22, @p23, @p24, @p25, @p26, @p27, @p28, @p29);
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p30, @p31, @p32, @p33, @p34, @p35, @p36, @p37);
+2026-05-02 14:15:56.761 +02:00 [INF] Executing ObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Transfers.TransferResultDto'.
+2026-05-02 14:15:56.767 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API) in 290.5337ms
+2026-05-02 14:15:56.769 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 14:15:56.819 +02:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?', @p1='?' (DbType = Guid), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?', @p5='?' (DbType = Object), @p6='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO idempotency_keys (key, user_id, created_at, expires_at, request_path, response_body, response_status)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6);
+2026-05-02 14:15:56.821 +02:00 [INF] Cached idempotency response for key 284102a1-2507-4aa8-bdd5-f16655d44ab2
+2026-05-02 14:15:56.821 +02:00 [INF] HTTP POST /api/transfers responded 201 in 506.654 ms
+2026-05-02 14:15:56.822 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/transfers - 201 null application/json; charset=utf-8 508.3482ms
+2026-05-02 14:16:24.331 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - null null
+2026-05-02 14:16:24.332 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:24.334 +02:00 [INF] HTTP OPTIONS /api/wallets responded 204 in 2.363 ms
+2026-05-02 14:16:24.337 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - 204 null null 6.2751ms
+2026-05-02 14:16:24.349 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:16:24.352 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:24.331 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:16:24.364 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:24.357 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:16:24.366 +02:00 [INF] HTTP OPTIONS /api/transfers responded 204 in 2.481 ms
+2026-05-02 14:16:24.370 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - 204 null null 39.5064ms
+2026-05-02 14:16:24.369 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:16:24.379 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:16:24.384 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:24.386 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:16:24.387 +02:00 [INF] Route matched with {action = "GetTransfers", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTransfers(Int32, Int32, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:16:24.389 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:16:24.396 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:16:24.400 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 16.0396ms
+2026-05-02 14:16:24.403 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:16:24.406 +02:00 [INF] HTTP GET /api/wallets responded 200 in 54.357 ms
+2026-05-02 14:16:24.409 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 59.6576ms
+2026-05-02 14:16:24.422 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:16:24.425 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ids_0='?' (DbType = Object), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+ORDER BY t.created_at DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-05-02 14:16:24.430 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__ids_0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+2026-05-02 14:16:24.432 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Common.PagedResponse`1[[LedgerSystem.Application.DTOs.Transfers.TransferDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:16:24.447 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API) in 57.6803ms
+2026-05-02 14:16:24.448 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:16:24.448 +02:00 [INF] HTTP GET /api/transfers responded 200 in 64.034 ms
+2026-05-02 14:16:24.450 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - 200 null application/json; charset=utf-8 70.4659ms
+2026-05-02 14:16:35.650 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/auth/logout - null null
+2026-05-02 14:16:35.652 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:35.653 +02:00 [INF] HTTP OPTIONS /api/auth/logout responded 204 in 2.081 ms
+2026-05-02 14:16:35.655 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/auth/logout - 204 null null 4.6773ms
+2026-05-02 14:16:35.660 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/logout - application/json 107
+2026-05-02 14:16:35.661 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:35.663 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Logout (LedgerSystem.API)'
+2026-05-02 14:16:35.671 +02:00 [INF] Route matched with {action = "Logout", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Logout(LedgerSystem.Application.DTOs.Auth.RefreshTokenRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:16:35.869 +02:00 [INF] Executed DbCommand (175ms) [Parameters=[@__token_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT r.id, r.created_at, r.expires_at, r.is_revoked, r.revoked_at, r.token, r.user_id
+FROM refresh_tokens AS r
+WHERE r.token = @__token_0
+LIMIT 1
+2026-05-02 14:16:35.886 +02:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-05-02 14:16:35.888 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Logout (LedgerSystem.API) in 215.6973ms
+2026-05-02 14:16:35.890 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Logout (LedgerSystem.API)'
+2026-05-02 14:16:35.892 +02:00 [INF] HTTP POST /api/auth/logout responded 204 in 230.914 ms
+2026-05-02 14:16:35.894 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/logout - 204 null null 233.3617ms
+2026-05-02 14:16:49.105 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - null null
+2026-05-02 14:16:49.107 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:49.108 +02:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 0.977 ms
+2026-05-02 14:16:49.108 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - 204 null null 3.1155ms
+2026-05-02 14:16:49.114 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 53
+2026-05-02 14:16:49.115 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:16:49.116 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:16:49.118 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:16:49.124 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:16:49.460 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 339.8639ms
+2026-05-02 14:16:49.461 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:16:49.462 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 346.791 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:16:49.464 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:16:49.466 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 351.9423ms
+2026-05-02 14:17:08.735 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - null null
+2026-05-02 14:17:08.736 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:08.738 +02:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 1.719 ms
+2026-05-02 14:17:08.739 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - 204 null null 4.3414ms
+2026-05-02 14:17:08.749 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 53
+2026-05-02 14:17:08.750 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:08.751 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:08.752 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:17:08.756 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:17:09.103 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 350.8389ms
+2026-05-02 14:17:09.104 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:09.106 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 355.512 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:17:09.108 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:17:09.110 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 360.859ms
+2026-05-02 14:17:28.614 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - null null
+2026-05-02 14:17:28.616 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:28.616 +02:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 0.591 ms
+2026-05-02 14:17:28.617 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - 204 null null 2.5417ms
+2026-05-02 14:17:28.624 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 53
+2026-05-02 14:17:28.625 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:28.626 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:28.626 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:17:28.631 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:17:28.981 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 353.6215ms
+2026-05-02 14:17:28.982 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:28.983 +02:00 [ERR] HTTP POST /api/auth/login responded 500 in 357.650 ms
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-05-02 14:17:28.984 +02:00 [WRN] Domain exception: INVALID_CREDENTIALS
+LedgerSystem.Domain.Exceptions.InvalidCredentialsException: Invalid email or password.
+   at LedgerSystem.Application.Services.AuthService.LoginAsync(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.Application/Services/AuthService.cs:line 58
+   at LedgerSystem.API.Controllers.AuthController.Login(LoginRequest request, CancellationToken ct) in /developer/ledger-system/src/LedgerSystem.API/Controllers/AuthController.cs:line 42
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at LedgerSystem.API.Middleware.IdempotencyMiddleware.InvokeAsync(HttpContext context, IIdempotencyService idempotencyService) in /developer/ledger-system/src/LedgerSystem.API/Middleware/IdempotencyMiddleware.cs:line 38
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at LedgerSystem.API.Middleware.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /developer/ledger-system/src/LedgerSystem.API/Middleware/GlobalExceptionHandlerMiddleware.cs:line 30
+2026-05-02 14:17:28.990 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 401 null application/json 365.6798ms
+2026-05-02 14:17:43.054 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - null null
+2026-05-02 14:17:43.055 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.056 +02:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 1.003 ms
+2026-05-02 14:17:43.058 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/auth/login - 204 null null 3.4178ms
+2026-05-02 14:17:43.066 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/auth/login - application/json 52
+2026-05-02 14:17:43.067 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.068 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:43.068 +02:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(LedgerSystem.Application.DTOs.Auth.LoginRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.AuthController (LedgerSystem.API).
+2026-05-02 14:17:43.074 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__ToLowerInvariant_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u.id, u.created_at, u.email, u.password_hash, u.role, u.updated_at
+FROM users AS u
+WHERE u.email = @__ToLowerInvariant_0
+LIMIT 1
+2026-05-02 14:17:43.426 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Auth.AuthResponse'.
+2026-05-02 14:17:43.427 +02:00 [INF] Executed action LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API) in 358.7313ms
+2026-05-02 14:17:43.428 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.AuthController.Login (LedgerSystem.API)'
+2026-05-02 14:17:43.428 +02:00 [INF] HTTP POST /api/auth/login responded 200 in 361.805 ms
+2026-05-02 14:17:43.429 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/auth/login - 200 null application/json; charset=utf-8 363.0303ms
+2026-05-02 14:17:43.503 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - null null
+2026-05-02 14:17:43.504 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.504 +02:00 [INF] HTTP OPTIONS /api/wallets responded 204 in 0.725 ms
+2026-05-02 14:17:43.505 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - 204 null null 2.1267ms
+2026-05-02 14:17:43.520 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:17:43.521 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.522 +02:00 [INF] HTTP OPTIONS /api/transfers responded 204 in 0.948 ms
+2026-05-02 14:17:43.523 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/transfers?page=1&pageSize=5 - 204 null null 2.6415ms
+2026-05-02 14:17:43.524 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:17:43.525 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.526 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:17:43.528 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:17:43.535 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - null null
+2026-05-02 14:17:43.537 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:43.539 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:17:43.540 +02:00 [INF] Route matched with {action = "GetTransfers", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTransfers(Int32, Int32, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:17:43.535 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:17:43.544 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:17:43.544 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:17:43.549 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__ids_0='?' (DbType = Object), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+ORDER BY t.created_at DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-05-02 14:17:43.551 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 21.1699ms
+2026-05-02 14:17:43.560 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:17:43.563 +02:00 [INF] HTTP GET /api/wallets responded 200 in 37.798 ms
+2026-05-02 14:17:43.564 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 40.1506ms
+2026-05-02 14:17:43.568 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ids_0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+2026-05-02 14:17:43.571 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Common.PagedResponse`1[[LedgerSystem.Application.DTOs.Transfers.TransferDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:17:43.572 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API) in 31.3724ms
+2026-05-02 14:17:43.575 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:17:43.576 +02:00 [INF] HTTP GET /api/transfers responded 200 in 38.605 ms
+2026-05-02 14:17:43.577 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=5 - 200 null application/json; charset=utf-8 41.219ms
+2026-05-02 14:17:52.056 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - null null
+2026-05-02 14:17:52.057 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:52.058 +02:00 [INF] HTTP OPTIONS /api/wallets responded 204 in 1.132 ms
+2026-05-02 14:17:52.061 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/wallets - 204 null null 5.0697ms
+2026-05-02 14:17:52.073 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:17:52.074 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:17:52.075 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:17:52.076 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:17:52.080 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:17:52.082 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:17:52.083 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 6.9202ms
+2026-05-02 14:17:52.084 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:17:52.085 +02:00 [INF] HTTP GET /api/wallets responded 200 in 11.658 ms
+2026-05-02 14:17:52.087 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 13.9527ms
+2026-05-02 14:18:05.387 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=20 - null null
+2026-05-02 14:18:05.389 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:18:05.390 +02:00 [INF] Route matched with {action = "GetTransfers", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetTransfers(Int32, Int32, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:18:05.399 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:18:05.405 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__ids_0='?' (DbType = Object), @__p_2='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+ORDER BY t.created_at DESC
+LIMIT @__p_2 OFFSET @__p_1
+2026-05-02 14:18:05.420 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__ids_0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT count(*)::int
+FROM transfers AS t
+WHERE t.source_wallet_id = ANY (@__ids_0) OR t.destination_wallet_id = ANY (@__ids_0)
+2026-05-02 14:18:05.427 +02:00 [INF] Executing OkObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Common.PagedResponse`1[[LedgerSystem.Application.DTOs.Transfers.TransferDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:18:05.435 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API) in 39.1284ms
+2026-05-02 14:18:05.439 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.GetTransfers (LedgerSystem.API)'
+2026-05-02 14:18:05.441 +02:00 [INF] HTTP GET /api/transfers responded 200 in 53.537 ms
+2026-05-02 14:18:05.444 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/transfers?page=1&pageSize=20 - 200 null application/json; charset=utf-8 56.6264ms
+2026-05-02 14:18:24.091 +02:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/wallets - null null
+2026-05-02 14:18:24.094 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:18:24.095 +02:00 [INF] Route matched with {action = "GetWallets", controller = "Wallets"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetWallets(System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.WalletsController (LedgerSystem.API).
+2026-05-02 14:18:24.102 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT w.id, w.balance, w.created_at, w.currency, w.is_active, w.user_id
+FROM wallets AS w
+WHERE w.user_id = @__userId_0
+ORDER BY w.created_at
+2026-05-02 14:18:24.107 +02:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[LedgerSystem.Application.DTOs.Wallets.WalletDto, LedgerSystem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-05-02 14:18:24.110 +02:00 [INF] Executed action LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API) in 12.6389ms
+2026-05-02 14:18:24.112 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.WalletsController.GetWallets (LedgerSystem.API)'
+2026-05-02 14:18:24.114 +02:00 [INF] HTTP GET /api/wallets responded 200 in 21.677 ms
+2026-05-02 14:18:24.115 +02:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/wallets - 200 null application/json; charset=utf-8 23.925ms
+2026-05-02 14:18:54.177 +02:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5000/api/transfers - null null
+2026-05-02 14:18:54.179 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:18:54.180 +02:00 [INF] HTTP OPTIONS /api/transfers responded 204 in 1.040 ms
+2026-05-02 14:18:54.181 +02:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5000/api/transfers - 204 null null 4.1624ms
+2026-05-02 14:18:54.189 +02:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/transfers - application/json 169
+2026-05-02 14:18:54.191 +02:00 [INF] CORS policy execution successful.
+2026-05-02 14:18:54.195 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?', @__userId_1='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT i.key, i.user_id, i.created_at, i.expires_at, i.request_path, i.response_body, i.response_status
+FROM idempotency_keys AS i
+WHERE i.key = @__key_0 AND i.user_id = @__userId_1 AND i.expires_at > now()
+LIMIT 1
+2026-05-02 14:18:54.197 +02:00 [INF] Executing endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 14:18:54.197 +02:00 [INF] Route matched with {action = "CreateTransfer", controller = "Transfers"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateTransfer(LedgerSystem.Application.DTOs.Transfers.CreateTransferRequest, System.Threading.CancellationToken) on controller LedgerSystem.API.Controllers.TransfersController (LedgerSystem.API).
+2026-05-02 14:18:54.202 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT t.id, t.amount, t.completed_at, t.created_at, t.currency, t.description, t.destination_wallet_id, t.idempotency_key, t.source_wallet_id, t.status
+FROM transfers AS t
+WHERE t.idempotency_key = @__key_0
+LIMIT 1
+2026-05-02 14:18:54.206 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[p0='?' (DbType = Object)], CommandType='"Text"', CommandTimeout='30']
+SELECT * FROM wallets WHERE id = ANY(@p0) FOR UPDATE
+2026-05-02 14:18:54.213 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Decimal), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?', @p8='?' (DbType = Guid), @p9='?', @p15='?' (DbType = Guid), @p10='?' (DbType = Decimal), @p11='?' (DbType = DateTime), @p12='?', @p13='?' (DbType = Boolean), @p14='?' (DbType = Guid), @p21='?' (DbType = Guid), @p16='?' (DbType = Decimal), @p17='?' (DbType = DateTime), @p18='?', @p19='?' (DbType = Boolean), @p20='?' (DbType = Guid), @p22='?' (DbType = Guid), @p23='?' (DbType = Decimal), @p24='?' (DbType = Decimal), @p25='?' (DbType = DateTime), @p26='?', @p27='?', @p28='?' (DbType = Guid), @p29='?' (DbType = Guid), @p30='?' (DbType = Guid), @p31='?' (DbType = Decimal), @p32='?' (DbType = Decimal), @p33='?' (DbType = DateTime), @p34='?', @p35='?', @p36='?' (DbType = Guid), @p37='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO transfers (id, amount, completed_at, created_at, currency, description, destination_wallet_id, idempotency_key, source_wallet_id, status)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+UPDATE wallets SET balance = @p10, created_at = @p11, currency = @p12, is_active = @p13, user_id = @p14
+WHERE id = @p15;
+UPDATE wallets SET balance = @p16, created_at = @p17, currency = @p18, is_active = @p19, user_id = @p20
+WHERE id = @p21;
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p22, @p23, @p24, @p25, @p26, @p27, @p28, @p29);
+INSERT INTO ledger_entries (id, amount, balance_after, created_at, description, entry_type, transfer_id, wallet_id)
+VALUES (@p30, @p31, @p32, @p33, @p34, @p35, @p36, @p37);
+2026-05-02 14:18:54.217 +02:00 [INF] Executing ObjectResult, writing value of type 'LedgerSystem.Application.DTOs.Transfers.TransferResultDto'.
+2026-05-02 14:18:54.219 +02:00 [INF] Executed action LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API) in 20.3948ms
+2026-05-02 14:18:54.219 +02:00 [INF] Executed endpoint 'LedgerSystem.API.Controllers.TransfersController.CreateTransfer (LedgerSystem.API)'
+2026-05-02 14:18:54.226 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[@p0='?', @p1='?' (DbType = Guid), @p2='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?', @p5='?' (DbType = Object), @p6='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO idempotency_keys (key, user_id, created_at, expires_at, request_path, response_body, response_status)
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6);
+2026-05-02 14:18:54.227 +02:00 [INF] Cached idempotency response for key 52e09a3f-d941-44c2-93c7-81d4ec069498
+2026-05-02 14:18:54.228 +02:00 [INF] HTTP POST /api/transfers responded 201 in 38.081 ms
+2026-05-02 14:18:54.230 +02:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/transfers - 201 null application/json; charset=utf-8 40.8488ms

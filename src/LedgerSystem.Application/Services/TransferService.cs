@@ -111,7 +111,6 @@ public sealed class TransferService : ITransferService
 
             // ── 10. Mark completed and save (commit handled by ExecuteInTransactionAsync) ──
             transfer.MarkCompleted();
-            await _transfers.UpdateAsync(transfer, innerCt);
             await _uow.SaveChangesAsync(innerCt);
 
             return new TransferResultDto(

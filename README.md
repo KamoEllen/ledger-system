@@ -1,4 +1,4 @@
-# Ledger System
+# Financial Ledger System (Failure-Driven Design Study)
 
 ![.NET](https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)

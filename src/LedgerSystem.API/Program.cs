@@ -202,14 +202,15 @@ try
     // Order matters: exception handler must be first so it catches all downstream errors.
     app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ledger System API v1");
+        c.RoutePrefix = "swagger";
+    });
+
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ledger System API v1");
-            c.RoutePrefix = "swagger";
-        });
     }
 
     app.UseSerilogRequestLogging(opts =>
@@ -218,7 +219,6 @@ try
             "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.000} ms";
     });
 
-    app.UseHttpsRedirection();
     app.UseCors();
     app.UseRateLimiter();
     app.UseAuthentication();

@@ -189,13 +189,17 @@ try
 
     var app = builder.Build();
 
-    // ── Run seeder when --seed flag is passed ─────────────────────────────────
-    if (args.Contains("--seed"))
+    // ── Apply migrations and seed on startup ──────────────────────────────────
+    using (var scope = app.Services.CreateScope())
     {
-        using var scope = app.Services.CreateScope();
-        var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
-        await seeder.SeedAsync();
-        return;
+        var db = scope.ServiceProvider.GetRequiredService<LedgerDbContext>();
+        await db.Database.MigrateAsync();
+
+        if (args.Contains("--seed") || app.Environment.IsProduction())
+        {
+            var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+            await seeder.SeedAsync();
+        }
     }
 
     // ── Middleware pipeline ───────────────────────────────────────────────────

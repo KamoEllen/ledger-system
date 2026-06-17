@@ -5,7 +5,7 @@
 
 [[redirects]]
   from   = "/api/*"
-  to     = "https://YOUR-RENDER-SERVICE.onrender.com/api/:splat"
+  to     = "https://ledger-system-1h27.onrender.com/api/:splat"
   status = 200
   force  = true
 
